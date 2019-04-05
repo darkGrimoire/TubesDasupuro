@@ -20,6 +20,31 @@ begin
     Crypt[i] := Chr(Ord(aText[i]) xor Ord(PWD[i]));
 end;
 
+
+function searchCellContain(d: tcsvdocument; OPT: integer; Where: integer; Text: string) : integer;
+begin
+  case OPT of
+    1 : begin //Search Col
+        searchCellContain := d.indexofcol(Text, Where);
+        end;
+    2 : begin //Search Row
+        searchCellContain := d.indexofrow(Text, Where);
+        end;
+    end;
+end;
+
+function isUsernameExist(d: tcsvdocument; Text: string) : boolean;
+begin
+  Text:=ChangeLineEndings(Crypt(Text), sLineBreak);
+  if searchCellContain(d,2,2,Text)=-1 then
+  begin
+    isUsernameExist:=false;
+  end else
+  begin
+    isUsernameExist:=true;
+  end;
+end;
+
 procedure register();
 var
   d: tcsvdocument;
@@ -35,41 +60,35 @@ begin
   begin
     case i of
       0 : begin
-          write('Masukkan nama pengunjung: ');
+          write('Masukkan nama: ');
           end;
       1 : begin
-          write('Masukkan alamat pengunjung: ');
+          write('Masukkan alamat: ');
           end;
       2 : begin
-          write('Masukkan username pengunjung: ');
+          write('Masukkan username: ');
           end;
       3 : begin
-          write('Masukkan password pengunjung: ');
+          write('Masukkan password: ');
           end;
       4 : begin
-          write('Masukkan role pengunjung: ');
+          write('Masukkan role: ');
           end;
     end;
     readln(input);
-    input:=Crypt(input);
-    d.cells[i,ROW]:=input;
+    if i=2 then
+      while isUsernameExist(d,input) do
+      begin
+        writeln('Username Sudah ada!');
+        write('Masukkan username: ');
+        readln(input);
+      end;
+    d.cells[i,ROW]:=Crypt(input);
     //writeln(d.cells[i,ROW]);
     //writeln(Crypt(d.cells[i,ROW]));
   end;
   d.savetofile('User.csv');
   d.destroy;
-end;
-
-function searchCellContain(d: tcsvdocument; OPT: integer; Where: integer; Text: string) : integer;
-begin
-  case OPT of
-    1 : begin //Search Col
-        searchCellContain := d.indexofcol(Text, Where);
-        end;
-    2 : begin //Search Row
-        searchCellContain := d.indexofrow(Text, Where);
-        end;
-    end;
 end;
 
 procedure login(var Role : string);
@@ -87,7 +106,7 @@ begin
   username := ChangeLineEndings(Crypt(username), sLineBreak);
   password := ChangeLineEndings(Crypt(password), sLineBreak);
   ret := searchCellContain(d,2,2,username);
-  writeln(ret,' ',password, ' ', d.cells[3,ret]);
+  //writeln(ret,' ',password, ' ', d.cells[3,ret]);
   if (ret=-1) or (password <> d.cells[3,ret]) then
   begin
     writeln('Username / password salah! Silakan coba lagi.');
