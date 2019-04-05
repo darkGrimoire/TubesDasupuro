@@ -45,6 +45,11 @@ begin
   end;
 end;
 
+function isKategoriValid(Text: string) : boolean;
+begin
+  isKategoriValid := (Text='sastra') or (Text='sains') or (Text='manga') or (Text='sejarah') or (Text='programming');
+end;
+
 procedure register();
 var
   d: tcsvdocument;
@@ -94,7 +99,7 @@ end;
 procedure login(var Role : string);
 var
   d: tcsvdocument;
-  username,password,FLineEnding: string;
+  username,password: string;
   ret: integer;
 begin
   d := tcsvdocument.create();
@@ -120,6 +125,62 @@ begin
   end;
 end;
 
+procedure cariBukuKategori();
+var
+  d: tcsvdocument;
+  input: string;
+  i: integer;
+
+begin
+  d := tcsvdocument.create();
+  d.loadfromfile('Buku.csv');
+  write('Masukkan kategori: ');
+  readln(input);
+  while not isKategoriValid(input) do
+    begin
+      writeln('Kategori ', input, ' tidak valid.');
+      write('Masukkan kategori: ');
+      readln(input);
+    end;
+  writeln('');
+  i:=0;
+  while i < d.rowcount do
+  begin
+    if (input <> d.Cells[5,i]) then
+    begin
+      d.RemoveRow(i);
+    end else
+    begin
+      i:=i+1;
+    end;
+  end;
+  writeln('Hasil pencarian:');
+  if d.rowcount=0 then
+  begin
+    writeln('Tidak ada buku dalam kategori ini.');
+  end else
+  begin
+    for i:=0 to d.rowcount-1 do
+    begin
+      write(d.Cells[0,i]); write(' | ');
+      write(d.Cells[1,i]); write(' | ');
+      write(d.Cells[2,i]); writeln('');
+    end;
+  end;
+  d.destroy;
+end;
+
+procedure cariBukuTahun();
+var
+  d: tcsvdocument;
+  tahun, kategori: string;
+
+begin
+  write('Masukkan tahun: '); readln(tahun);
+  write('Masukkan kategori: '); readln(kategori);
+
+end;
+
 begin
   {
   d := tcsvdocument.create();
@@ -143,7 +204,8 @@ begin
   begin
     writeln('-----MENU [WIP]-----');
     writeln('[1] Registrasi Akun ');
-    writeln('[2] Login Akun'); writeln('');
+    writeln('[2] Login Akun');
+    writeln('[3] Cari Buku (Kategori)'); writeln('');
     write('Pilihan: ');
     readln(choice);
     case choice of
@@ -153,6 +215,9 @@ begin
       2 : begin
           login(role);
           writeln(role);
+          end;
+      3 : begin
+          cariBukuKategori();
           end;
     end;
     writeln('---'); writeln('');
