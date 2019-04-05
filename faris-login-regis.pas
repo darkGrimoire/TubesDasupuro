@@ -4,7 +4,7 @@ uses csvdocument;
 
 var
   choice: integer;
-  txt, role: string;
+  role: string;
 
 function Crypt(aText: string): string;
 const
@@ -56,26 +56,49 @@ begin
     //writeln(d.cells[i,ROW]);
     //writeln(Crypt(d.cells[i,ROW]));
   end;
-  d.savetofile('User.csv')
+  d.savetofile('User.csv');
+  d.destroy;
 end;
 
-function is
+function searchCellContain(d: tcsvdocument; OPT: integer; Where: integer; Text: string) : integer;
+begin
+  case OPT of
+    1 : begin //Search Col
+        searchCellContain := d.indexofcol(Text, Where);
+        end;
+    2 : begin //Search Row
+        searchCellContain := d.indexofrow(Text, Where);
+        end;
+    end;
+end;
 
 procedure login(var Role : string);
 var
   d: tcsvdocument;
-  input: string;
+  username,password: string;
   ret: integer;
 begin
   d := tcsvdocument.create();
   d.loadfromfile('User.csv');
   write('Masukkan username: ');
-  readln
-  readln(input);
-  input := Crypt(input);
-  ret := d.indexofrow(input,0);
-  writeln(ret);
-  Role := Crypt(d.cells[4,ret]);
+  readln(username);
+  write('Masukkan password: ');
+  readln(password); writeln('');
+  username:=Crypt(username);
+  password:=Crypt(password);
+  ret := searchCellContain(d,2,2,username);
+  writeln(ret,' ',password, ' ', d.cells[3,ret]);
+  if (ret=-1) or (password <> d.cells[3,ret]) then
+  begin
+    writeln('Username / password salah! Silakan coba lagi.');
+    Role := '';
+    d.destroy;
+  end else
+  begin
+    writeln('Selamat datang ', Crypt(d.cells[0,ret]), '!');
+    Role := Crypt(d.cells[4,ret]);
+    d.destroy;
+  end;
 end;
 
 begin
@@ -113,6 +136,6 @@ begin
           writeln(role);
           end;
     end;
-    writeln(''); writeln('---'); writeln('');
+    writeln('---'); writeln('');
   end;
 end.
