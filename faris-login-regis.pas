@@ -1,6 +1,6 @@
 Program LoginRegis;
 
-uses csvdocument;
+uses csvdocument, csvreadwrite;
 
 var
   choice: integer;
@@ -75,7 +75,7 @@ end;
 procedure login(var Role : string);
 var
   d: tcsvdocument;
-  username,password: string;
+  username,password,FLineEnding: string;
   ret: integer;
 begin
   d := tcsvdocument.create();
@@ -84,8 +84,8 @@ begin
   readln(username);
   write('Masukkan password: ');
   readln(password); writeln('');
-  username:=Crypt(username);
-  password:=Crypt(password);
+  username := ChangeLineEndings(Crypt(username), sLineBreak);
+  password := ChangeLineEndings(Crypt(password), sLineBreak);
   ret := searchCellContain(d,2,2,username);
   writeln(ret,' ',password, ' ', d.cells[3,ret]);
   if (ret=-1) or (password <> d.cells[3,ret]) then
