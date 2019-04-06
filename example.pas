@@ -1,13 +1,22 @@
 Program Example38;
 
+uses sysutils, strutils;
+
 Type  
-  TCSVArr = array of array of string;
-  TRow = array of string;
+  TCSVArr = record
+          Arr : array of array of string;
+          Row, Col : integer;
+          end;
+  TRow = record
+          Arr : array of string;
+          Col : integer;
+          end;
 
 var
   TArr : TCSVArr;
   TArrRow: TRow;
   txt: string;
+  i: integer;
 
 function Crypt(aText: string): string;
 const
@@ -26,70 +35,117 @@ begin
   end;
 end;
 
-procedure TWrite(Arr: TCSVArr);
+procedure TWrite(TArr: TCSVArr);
 var
   i, j: Integer;
 begin
-  for i:=Low(Arr) to High(Arr) do
+  for i:=Low(TArr.Arr) to High(Tarr.Arr) do
   begin
     Write('Arr[', i, ']:  ');
-    for j:=Low(Arr[i]) to High(Arr[i]) do
-      Write(Arr[i][j], '..');
+    for j:=Low(TArr.Arr[i]) to High(TArr.Arr[i]) do
+      Write(TArr.Arr[i][j], '..');
     WriteLn('|');
   end;
 end;
-// "abc,d",ef,"g,hi",jk 1 7
-// ,ef,"g,hi",jk
-// "g,hi",jk
-// ,jk
+
+// abc
+// abc,def
+// abc,def,ghi,
+// ,abc,,,
+// awal: ""(quotation)char(cellbuf),(whitespace)
+// tengah: ""(quotation)char(cellbuf),(endcol/whitespace)
+// akhir: ""(quotation)/char(cellbuf/eol),(whitespace)
+
 function CSVParser(aText: string): TRow;
 const
-  Delimiter = ',';
+  Delim = ',';
   Quote = '"';
 var
-  nD,nQ,nextD,nextQ,i: integer;
+  i,len,col: integer;
+  Quotation: boolean = false;
+  CellBuffer: string;
 begin
-  i:=0;
-  while (length(aText)>0) do
+  i:=1;
+  col:=0;
+  CellBuffer:='';
+  len:=length(aText);
+  while i<=len do
   begin
-    SetLength(CSVParser,i+1);
-    nD:=Pos(Quote,aText);
-    nQ:=Pos(Delimiter,aText);
-    // WriteLn('i: ',i,'nD: ',nD,'nQ: ',nQ);
-    if (nQ=0) and (nD=0) then
+    SetLength(CSVParser.Arr,col+1);
+    if i=1 then
     begin
-      CSVParser[i]:=aText;
-      aText:='';
-    end else
-    if (nQ<>0) and (nQ<nD) then
-    begin
-      nextQ:=Pos(Quote,copy(aText,nQ+1,Length(aText)))+1;
-      CSVParser[i]:=copy(aText,nQ+1,nextQ-1);
-      aText:=copy(aText,nextQ+1,Length(aText));
-      Inc(i);
-    end else
-    begin
-      nextD:=Pos(Delimiter,copy(aText,nD+1,Length(aText)))+1;
-      if nextD=nD then
+      if aText[i]=Delim then
       begin
-        CSVParser[i]:=copy(aText,nD+1,Length(aText));
-        aText:='';
+        CSVParser.Arr[col]:=CellBuffer; //CellBuffer still whitespace
+        Inc(col); Inc(i);
+      end else
+      if aText[i]=Quote then
+      begin
+        Quotation:=true;
+        Inc(i);
       end else
       begin
-        CSVParser[i]:=copy(aText,nD+1,nextD-1);
-        aText:=copy(aText,nextD+1,Length(aText));
+        CellBuffer:=CellBuffer+aText[i];
+        Inc(i);
+      end;
+    end else
+    begin
+      while Quotation do
+      begin
+        if aText[i]=Quote then
+        begin
+          CSVParser.Arr[col]:=CellBuffer;
+          CellBuffer:='';
+          Quotation:=false;
+          Inc(i,2); Inc(Col); //after end quotation always followed by delim
+        end else
+        begin
+          CellBuffer:=CellBuffer+aText[i];
+          Inc(i);
+        end;
+      end;
+      if aText[i]=Delim then
+      begin
+        CSVParser.Arr[col]:=CellBuffer;
+        CellBuffer:='';
+        Inc(i); Inc(Col);
+      end else
+      if aText[i]=Quote then
+      begin
+        Quotation:=true;
+        Inc(i);
+      end else
+      begin
+        CellBuffer:=CellBuffer+aText[i];
         Inc(i);
       end;
     end;
+  end;
+  if aText[len]=Delim then
+  begin
+    CSVParser.Arr[col]:=CellBuffer;
+    CSVParser.Col:=col+1;
+  end else
+  if aText[len]=Quote then
+  begin
+    CSVParser.Col:=col;
+  end else
+  begin
+    CSVParser.Arr[col]:=CellBuffer;
+    CSVParser.Col:=col+1;
   end;
 end;
 
 begin
   readln(txt);
   TArrRow:=CSVParser(txt);
-  SetLength(TArr,1,3);
-  TArr[0][0]:=TArrRow[0];
-  TArr[0][1]:=TArrRow[1];
-  TArr[0][2]:=TArrRow[2];
+  SetLength(TArr.Arr,1,TArrRow.Col);
+  for i:=0 to TArrRow.Col-1 do
+    TArr.Arr[0][i]:=TArrRow.Arr[i];
   TWrite(TArr);
+  writeln(TArrRow.Col);
+  // TArr[0][0]:=TArrRow[0];
+  // TArr[0][1]:=TArrRow[1];
+  // TArr[0][2]:=TArrRow[2];
+  // TWrite(TArr);
 End.
