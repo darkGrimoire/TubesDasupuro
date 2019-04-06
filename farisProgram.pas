@@ -1,6 +1,6 @@
 Program mainFaris;
 
-uses sysutils, strutils;
+uses sysutils;
 
 Type  
   TCSVArr = record
@@ -13,7 +13,7 @@ Type
           end;
 
 var
-  TArr : TCSVArr;
+  TArr : TCSVArr; //format 2Dnya: [row,col]
   TArrRow: TRow;
   txt: string;
   i: integer;
@@ -35,16 +35,17 @@ begin
   end;
 end;
 
+// Tulis tabel tipe TCSVArr
 procedure TWrite(TArr: TCSVArr);
 var
   i, j: Integer;
 begin
-  for i:=Low(TArr.Arr) to High(Tarr.Arr) do
+  for i:=Low(TArr.Arr) to High(Tarr.Arr) do //for loop buat rownya
   begin
     Write('Arr[', i, ']:  ');
     for j:=Low(TArr.Arr[i]) to High(TArr.Arr[i]) do
-      Write(TArr.Arr[i][j], '..');
-    WriteLn('|');
+      Write(TArr.Arr[i][j], '..'); //tabel dipisahkan dengan ..
+    WriteLn('|'); //batas akhir satu row
   end;
 end;
 
@@ -56,7 +57,9 @@ end;
 // tengah: ""(quotation)char(cellbuf),(endcol/whitespace)
 // akhir: ""(quotation)/char(cellbuf/eol),(whitespace)
 
+//Parse String menjadi bentuk TRow
 function CSVParser(aText: string): TRow;
+//Deklarasi delimiter dan quote char
 const
   Delim = ',';
   Quote = '"';
@@ -65,32 +68,34 @@ var
   Quotation: boolean = false;
   CellBuffer: string;
 begin
+  //Inisialisasi
   i:=1;
   col:=0;
   CellBuffer:='';
   len:=length(aText);
   while i<=len do
   begin
+    //Ubah Ukuran Arraynya setiap pengulangan while
     SetLength(CSVParser.Arr,col+1);
-    if i=1 then
+    if i=1 then //cek karakter pertama di string aText
     begin
-      if aText[i]=Delim then
+      if aText[i]=Delim then //Kalau langsung ketemu delimiter artinya kolom pertamanya baris kosong
       begin
-        CSVParser.Arr[col]:=CellBuffer; //CellBuffer still whitespace
-        Inc(col); Inc(i);
+        CSVParser.Arr[col]:=CellBuffer; //CellBuffer still ''
+        Inc(col); Inc(i); //Setiap pemasukan ke result CSVParser.Arr, tambahkan kolom yang ingin diproses
       end else
-      if aText[i]=Quote then
+      if aText[i]=Quote then //Kalau langsung ketemu quote, switch flag quotation
       begin
         Quotation:=true;
         Inc(i);
       end else
       begin
-        CellBuffer:=CellBuffer+aText[i];
+        CellBuffer:=CellBuffer+aText[i]; //Kalau langsung ketemu karakter biasa
         Inc(i);
       end;
     end else
     begin
-      while Quotation do
+      while Quotation do //Prosedur quotation, hanya berhenti ketika menemui quote berikutnya dan mengabaikan tanda delimiter
       begin
         if aText[i]=Quote then
         begin
@@ -104,51 +109,64 @@ begin
           Inc(i);
         end;
       end;
-      if aText[i]=Delim then
+      if aText[i]=Delim then //Pas di tengah2 ketemu delim. CellBuffer sudah pasti mengandung isi cell satu kolom.
       begin
-        CSVParser.Arr[col]:=CellBuffer;
-        CellBuffer:='';
+        CSVParser.Arr[col]:=CellBuffer; //Assign CellBuffer
+        CellBuffer:=''; //Reset CellBuffer
         Inc(i); Inc(Col);
       end else
-      if aText[i]=Quote then
+      if aText[i]=Quote then //Pas di tengah2 ketemu quote
       begin
         Quotation:=true;
         Inc(i);
       end else
       begin
-        CellBuffer:=CellBuffer+aText[i];
+        CellBuffer:=CellBuffer+aText[i]; //Pas di tengah2 ketemu karakter biasa, masukkan ke cellBuffer
         Inc(i);
       end;
     end;
   end;
-  if aText[len]=Delim then
+  //Cek karakter terakhir aText apa. Trus, assign jumlah kolomnya ke CSVParser.Col
+  if aText[len]=Delim then //Kalau delim, brrti setelahnya ada kolom cell kosong.
   begin
     CSVParser.Arr[col]:=CellBuffer;
     CSVParser.Col:=col+1;
   end else
-  if aText[len]=Quote then
+  if aText[len]=Quote then //Kalau quote, brrti sudah pasti diselesaikan sama prosedur quotationnya tinggal assign Col.
   begin
     CSVParser.Col:=col;
   end else
   begin
-    CSVParser.Arr[col]:=CellBuffer;
+    CSVParser.Arr[col]:=CellBuffer; //Kalau karakter biasa, pasti masih ada sisa CellBuffer kolom terakhir. Assign kolom cell itu trus assign Col.
     CSVParser.Col:=col+1;
   end;
 end;
 
+//Prosedur penambahan Row (AppendRow) pada TCSV (Table CSV)
+procedure addRow(var TCSV: TCSVArr; aRow: TRow);
 begin
+  Inc(TCSV.Row); //Tambahkan Rownya TCSV
+  if TCSV.Col=0 then TCSV.Col:=aRow.Col; //Kalau TCSV belum punya Col, assign Col sesuai dgn Col aRow
+  SetLength(TCSV.Arr,TCSV.Row,TCSV.Col); //SetLength Array sesuai dgn yg sudah ditentukan Row dan Colnya tadi
+  for i:=0 to TCSV.Col-1 do
+    TCSV.Arr[TCSV.Row-1][i]:=aRow.Arr[i]; //Isi Row terbawah TCSV dgn aRow
+end;
+
+begin
+  //initialization
   TArr.Row:=0;
   TArr.Col:=0;
   while true do
   begin
+    //input
     readln(txt);
+    //parse
     TArrRow:=CSVParser(txt);
-    Inc(TArr.Row);
-    if TArr.Col=0 then TArr.Col:=TArrRow.Col; //ngikutin kolom si rownya
-    SetLength(TArr.Arr,TArr.Row,TArr.Col);
-    for i:=0 to TArrRow.Col-1 do
-      TArr.Arr[TArr.Row-1][i]:=TArrRow.Arr[i];
+    //append row
+    addRow(TArr,TArrRow);
+    //print table
     TWrite(TArr);
+    //Tuliskan Col dan Row TCSV yang baru
     writeln('Col: ',TArr.Col,' and Row: ',TArr.Row);
   end;
 
