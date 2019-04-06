@@ -137,13 +137,25 @@ begin
 end;
 
 begin
+  TArr.Row:=0;
+  TArr.Col:=0;
   readln(txt);
   TArrRow:=CSVParser(txt);
-  SetLength(TArr.Arr,1,TArrRow.Col);
+  Inc(TArr.Row); TArr.Col:=TArrRow.Col;
+  SetLength(TArr.Arr,TArr.Row,TArr.Col);
   for i:=0 to TArrRow.Col-1 do
-    TArr.Arr[0][i]:=TArrRow.Arr[i];
+    TArr.Arr[TArr.Row-1][i]:=TArrRow.Arr[i];
   TWrite(TArr);
-  writeln(TArrRow.Col);
+  writeln(TArr.Col,TArr.Row);
+
+  readln(txt);
+  TArrRow:=CSVParser(txt);
+  Inc(TArr.Row); TArr.Col:=TArrRow.Col;
+  SetLength(TArr.Arr,TArr.Row,TArr.Col);
+  for i:=0 to TArrRow.Col-1 do
+    TArr.Arr[TArr.Row-1][i]:=TArrRow.Arr[i];
+  TWrite(TArr);
+  writeln(TArr.Col,TArr.Row);
   // TArr[0][0]:=TArrRow[0];
   // TArr[0][1]:=TArrRow[1];
   // TArr[0][2]:=TArrRow[2];
