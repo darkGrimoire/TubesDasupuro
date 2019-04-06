@@ -1,15 +1,15 @@
 Program mainFaris;
 
-uses sysutils;
+uses Sysutils;
 
 Type  
-  TCSVArr = record
-          Arr : array of array of string;
-          Row, Col : integer;
-          end;
   TRow = record
           Arr : array of string;
           Col : integer;
+          end;
+  TCSVArr = record
+          Arr : array of array of string;
+          Row, Col : integer;
           end;
 
 var
@@ -36,15 +36,15 @@ begin
 end;
 
 // Tulis tabel tipe TCSVArr
-procedure TWrite(TArr: TCSVArr);
+procedure TWrite(TCSV: TCSVArr);
 var
   i, j: Integer;
 begin
-  for i:=Low(TArr.Arr) to High(Tarr.Arr) do //for loop buat rownya
+  for i:=Low(TCSV.Arr) to High(TCSV.Arr) do //for loop buat rownya
   begin
     Write('Arr[', i, ']:  ');
-    for j:=Low(TArr.Arr[i]) to High(TArr.Arr[i]) do
-      Write(TArr.Arr[i][j], '..'); //tabel dipisahkan dengan ..
+    for j:=Low(TCSV.Arr[i]) to High(TCSV.Arr[i]) do
+      Write(TCSV.Arr[i][j], '..'); //tabel dipisahkan dengan ..
     WriteLn('|'); //batas akhir satu row
   end;
 end;
@@ -152,23 +152,90 @@ begin
     TCSV.Arr[TCSV.Row-1][i]:=aRow.Arr[i]; //Isi Row terbawah TCSV dgn aRow
 end;
 
+procedure readCSV(const Filename: string; var TCSV: TCSVArr);
+var
+  tfIn: TextFile;
+  line: string;
+  row: TRow;
+
 begin
-  //initialization
-  TArr.Row:=0;
-  TArr.Col:=0;
+  TCSV.Row:=0;
+  TCSV.Col:=0;
+  Assign(tfIn, Filename);
+  reset(tfIn);
+  while not eof(tfIn) do
+  begin
+    readln(tfIn, line);
+    row:=CSVParser(line);
+    addRow(TCSV,row);
+  end;
+  Close(tfIn);
+end;
+
+function CSVBuilder(aRow: TCSVArr; row: integer): string;
+const
+  Delim = ',';
+  Quote = '"';
+var
+  col: integer;
+  cell: string;
+begin
+  CSVBuilder:='';
+  for col:=0 to aRow.Col-2 do
+  begin
+    // writeln(aRow.Arr[row][col]);
+    if Pos(Delim,aRow.Arr[row][col])<>0 then
+    begin
+    // writeln(Pos(Delim,aRow.Arr[row][col]));
+      CSVBuilder:= CSVBuilder + Quote + aRow.Arr[row][col] + Quote + Delim;
+    end else
+    begin
+      CSVBuilder:= CSVBuilder + aRow.Arr[row][col] + Delim;
+    end;
+  end;
+  CSVBuilder:= CSVBuilder + aRow.Arr[row][aRow.Col-1];
+end;
+
+procedure writeCSV(const Filename: string; TCSV: TCSVArr);
+var
+  i,j: integer;
+  aRow: TRow;
+  csv: string;
+  tfOut: TextFile;
+begin
+Assign(tfOut,Filename);
+Rewrite(tfOut);
+for i:=Low(TCSV.Arr) to High(TCSV.Arr) do //for loop buat rownya
+  begin
+  csv:=CSVBuilder(TCSV,i);
+  writeln(tfOut, csv);
+  end;
+Close(tfOut);
+end;
+
+begin
+  readCSV('Buku.csv',TArr);
+  TWrite(TArr);
   while true do
   begin
-    //input
-    readln(txt);
-    //parse
-    TArrRow:=CSVParser(txt);
-    //append row
-    addRow(TArr,TArrRow);
-    //print table
-    TWrite(TArr);
-    //Tuliskan Col dan Row TCSV yang baru
-    writeln('Col: ',TArr.Col,' and Row: ',TArr.Row);
+    readln(i);
+    writeln(CSVBuilder(TArr,i));
   end;
+  // //input
+  // readln(txt);
+  // while txt<>-999 do
+  // begin
+  //   //parse
+  //   TArrRow:=CSVParser(txt);
+  //   //append row
+  //   addRow(TArr,TArrRow);
+  //   //print table
+  //   TWrite(TArr);
+  //   //Tuliskan Col dan Row TCSV yang baru
+  //   writeln('Col: ',TArr.Col,' and Row: ',TArr.Row);
+  //   //input
+  //   readln(txt);
+  // end;
 
   // TArr[0][0]:=TArrRow[0];
   // TArr[0][1]:=TArrRow[1];

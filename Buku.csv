@@ -20,7 +20,7 @@ ID_Buku,Judul_Buku,Author,Jumlah_Buku,Tahun_Penerbit,Kategori
 21874,Doraemon Vol. 17,Fujiko F. Fujio,28,1996,Manga
 17059,Calculus,Edwin J. Purcell,33,1969,Sains
 41691,Kubah,Ahmad Tohari,36,1972,Sastra
-"24926,Hi, Miiko! Vol. 15,Ono Eriko,10,2008,Manga",,,,,
+24926,"Hi, Miiko! Vol. 15",Ono Eriko,10,2008,Manga
 14463,Fluid Mechanics,Sana Bakoush,7,2003,Sains
 39952,Paradigms of Programming,Willhelm Magnusson,50,2010,Programming
 33677,Procedural Programming,Isak Yaki,31,1990,Programming
