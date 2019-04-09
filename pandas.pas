@@ -17,19 +17,24 @@ const
 //Write Table of TCSV for debugging
 procedure TWrite(TCSV: TCSVArr);
 //Sort TCSV with col as the pivot
-procedure sortCSV(var TCSV: TCSVArr; col: integer);
+// procedure sortCSV(var TCSV: TCSVArr; col: integer);
 //Parse string in csv format into TRow format
 function CSVParser(aText: string): TRow;
 //Append a row into the bottom-most TCSV
 procedure addRow(var TCSV: TCSVArr; aRow: TRow);
 //Remove specified row index
 procedure removeRow(var TCSV: TCSVArr; row: integer);
+//Escapes '"' in text
+function escapeQuote(aText: string): string;
+//Descapes \" in text
+function descapeQuote(aText: string): string;
 //Read CSV File into TCSV
 procedure readCSV(const Filename: string; var TCSV: TCSVArr);
 //Convert a row from TCSV into string with csv format
 function CSVBuilder(aRow: TCSVArr; row: integer): string;
 //Overwrite TCSV to a CSV File
 procedure writeCSV(const Filename: string; TCSV: TCSVArr);
+procedure TDestroy(var TCSV: TCSVArr);
 
 implementation
 // Tulis tabel tipe TCSVArr
@@ -46,8 +51,12 @@ begin
   end;
 end;
 
-procedure sortCSV(var TCSV: TCSVArr; col: integer);
-
+// procedure sortCSV(var TCSV: TCSVArr; col: integer);
+// var
+//   i: integer;
+// begin
+//   for i:=0 to TCSV.
+// end;
 
 //Parse String menjadi bentuk TRow
 function CSVParser(aText: string): TRow;
@@ -135,6 +144,46 @@ begin
   SetLength(TCSV.Arr,TCSV.Row,TCSV.Col);
 end;
 
+//Escape karakter '"' menjadi \" jika ketemu di user input
+function escapeQuote(aText: string): string;
+var
+  i,len: integer;
+begin
+  len:=Length(aText);
+  SetLength(escapeQuote,len);
+  for i:=1 to len do
+  begin
+    if (aText[i]='"') then
+    begin
+      escapeQuote := escapeQuote + '\' + aText[i];
+      SetLength(escapeQuote,len+1);
+    end else
+    begin
+      escapeQuote := escapeQuote + aText[i];
+    end;
+  end;
+end;
+
+//kembalikan \" menjadi bentuk '"' biasa
+function descapeQuote(aText: string): string;
+var
+  i,len: integer;
+begin
+  len:=Length(aText);
+  SetLength(descapeQuote,len);
+  for i:=1 to len do
+  begin
+    if (aText[i]='\') and (aText[i+1]='"') then
+    begin
+      descapeQuote := descapeQuote + '';
+      SetLength(descapeQuote,len-1);
+    end else
+    begin
+      descapeQuote := descapeQuote + aText[i];
+    end;
+  end;
+end;
+
 procedure readCSV(const Filename: string; var TCSV: TCSVArr);
 var
   tfIn: TextFile;
@@ -149,6 +198,8 @@ begin
   while not eof(tfIn) do
   begin
     readln(tfIn, line);
+    if Pos(Quote,line)<>0 then //descape quotes
+      line:= descapeQuote(line);
     row:=CSVParser(line);
     addRow(TCSV,row);
   end;
@@ -162,6 +213,8 @@ begin
   CSVBuilder:='';
   for col:=0 to aRow.Col-2 do
   begin
+    if Pos(Quote,aRow.Arr[row][col])<>0 then //escape quotes
+      aRow.Arr[row][col]:= escapeQuote(aRow.Arr[row][col]);
     // writeln(aRow.Arr[row][col]);
     if Pos(Delim,aRow.Arr[row][col])<>0 then
     begin
@@ -183,8 +236,7 @@ end;
 
 procedure writeCSV(const Filename: string; TCSV: TCSVArr);
 var
-  i,j: integer;
-  aRow: TRow;
+  i: integer;
   csv: string;
   tfOut: TextFile;
 begin
@@ -196,6 +248,13 @@ for i:=Low(TCSV.Arr) to High(TCSV.Arr) do //for loop buat rownya
   writeln(tfOut, csv);
   end;
 Close(tfOut);
+end;
+
+procedure TDestroy(var TCSV: TCSVArr);
+begin
+  TCSV.Row:=0;
+  TCSV.Col:=0;
+  SetLength(TCSV.Arr,0,0);
 end;
 
 end.

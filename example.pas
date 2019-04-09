@@ -3,14 +3,26 @@ Program Example42;
 uses pandas;
 var
   i: integer;
+  str: string;
   TCSV: TCSVArr;
+  aRow: TRow;
 begin
-  readCSV('Buku.csv',TCSV);
+  readCSV('Laporan_Buku_Hilang.csv',TCSV);
   TWrite(TCSV);
   while true do
   begin
+    writeln('Delete Row:');
     readln(i);
-    removeRow(TCSV,i);
+    if i>0 then
+    begin
+      removeRow(TCSV,i);
+    end else
+    begin
+    writeln('Append Mode with row: ',TCSV.Row,' and col: ',TCSV.Col);
+    readln(str);
+    aRow:=(CSVParser(str));
+    addRow(TCSV,aRow);
+    end;
     TWrite(TCSV);
   end;
   // //input
