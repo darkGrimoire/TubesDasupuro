@@ -16,6 +16,8 @@ const
 
 //Write Table of TCSV for debugging
 procedure TWrite(TCSV: TCSVArr);
+//CompareText buatan sendiri gara2 gabole makek sysutils
+function compareString(T1,T2: string): integer;
 //Sort TCSV with col as the pivot
 // procedure sortCSV(var TCSV: TCSVArr; col: integer);
 //Parse string in csv format into TRow format
@@ -26,8 +28,6 @@ procedure addRow(var TCSV: TCSVArr; aRow: TRow);
 procedure removeRow(var TCSV: TCSVArr; row: integer);
 //Escapes '"' in text
 function escapeQuote(aText: string): string;
-//Descapes \" in text
-function descapeQuote(aText: string): string;
 //Read CSV File into TCSV
 procedure readCSV(const Filename: string; var TCSV: TCSVArr);
 //Convert a row from TCSV into string with csv format
@@ -51,11 +51,44 @@ begin
   end;
 end;
 
+function compareString(T1,T2: string): integer;
+var
+  i,len: integer;
+begin
+  i:=1;
+  if Length(T2)<=Length(T1) then
+    len:= Length(T2)
+  else
+    len:= Length(T1);
+  Lowercase(T1);
+  Lowercase(T2);
+  while (Ord(T1[i])=Ord(T2[i])) and (i<=len) do
+    Inc(i);
+  if (i=len) and (i<>1) then
+  begin
+    if Length(T1)>Length(T2) then
+      compareString:=1
+    else if Length(T2)>Length(T1) then
+      compareString:=-1
+    else
+      compareString:=0;
+  end else
+  if (Ord(T1[i])>Ord(T2[i])) then
+    compareString:=1
+  else
+    compareString:=-1;
+end;
+
 // procedure sortCSV(var TCSV: TCSVArr; col: integer);
 // var
-//   i: integer;
+//   i,iMax: integer;
 // begin
-//   for i:=0 to TCSV.
+//   iMax:=0;
+//   for i:=0 to TCSV.Row-1 do
+//   begin
+//     if TCSV.Arr[i][col]>TCSV.Arr[iMax][col] then
+//     begin
+
 // end;
 
 //Parse String menjadi bentuk TRow
@@ -84,6 +117,11 @@ begin
         Quotation:=false;
         Inc(i,2); Inc(Col); //after end quotation always followed by delim
       end else
+      if aText[i]=chr(14) then
+      begin
+        CellBuffer:=CellBuffer+'"';
+        Inc(i);
+      end else
       begin
         CellBuffer:=CellBuffer+aText[i];
         Inc(i);
@@ -98,6 +136,11 @@ begin
     if aText[i]=Quote then //Pas di tengah2 ketemu quote
     begin
       Quotation:=true;
+      Inc(i);
+    end else
+    if aText[i]=chr(14) then
+    begin
+      CellBuffer:=CellBuffer+'"';
       Inc(i);
     end else
     begin
@@ -149,37 +192,16 @@ function escapeQuote(aText: string): string;
 var
   i,len: integer;
 begin
+  escapeQuote:='';
   len:=Length(aText);
-  SetLength(escapeQuote,len);
   for i:=1 to len do
   begin
     if (aText[i]='"') then
     begin
-      escapeQuote := escapeQuote + '\' + aText[i];
-      SetLength(escapeQuote,len+1);
+      escapeQuote := escapeQuote + chr(14);
     end else
     begin
       escapeQuote := escapeQuote + aText[i];
-    end;
-  end;
-end;
-
-//kembalikan \" menjadi bentuk '"' biasa
-function descapeQuote(aText: string): string;
-var
-  i,len: integer;
-begin
-  len:=Length(aText);
-  SetLength(descapeQuote,len);
-  for i:=1 to len do
-  begin
-    if (aText[i]='\') and (aText[i+1]='"') then
-    begin
-      descapeQuote := descapeQuote + '';
-      SetLength(descapeQuote,len-1);
-    end else
-    begin
-      descapeQuote := descapeQuote + aText[i];
     end;
   end;
 end;
@@ -198,8 +220,6 @@ begin
   while not eof(tfIn) do
   begin
     readln(tfIn, line);
-    if Pos(Quote,line)<>0 then //descape quotes
-      line:= descapeQuote(line);
     row:=CSVParser(line);
     addRow(TCSV,row);
   end;
@@ -225,7 +245,9 @@ begin
       CSVBuilder:= CSVBuilder + aRow.Arr[row][col] + Delim;
     end;
   end;
-  if Pos(Delim,aRow.Arr[row][col])<>0 then
+  if Pos(Quote,aRow.Arr[row][aRow.Col-1])<>0 then //escape quotes
+      aRow.Arr[row][aRow.Col-1]:= escapeQuote(aRow.Arr[row][aRow.Col-1]);
+  if Pos(Delim,aRow.Arr[row][aRow.Col-1])<>0 then
   begin
     CSVBuilder:= CSVBuilder + Quote + aRow.Arr[row][aRow.Col-1] + Quote;
   end else

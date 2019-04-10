@@ -92,7 +92,8 @@ begin
         readln(input);
       end;
     if i=3 then
-      aRow.Arr[i]:=Crypt(input)
+      // aRow.Arr[i]:=Crypt(input)
+      aRow.Arr[i]:=input
     else
       aRow.Arr[i]:=input;
   end;
@@ -113,14 +114,14 @@ begin
   readln(username);
   write('Masukkan password: ');
   readln(password); writeln('');
-  password:=Crypt(password);
+  // password:=Crypt(password);
   ret := searchCellContain(TUser,_username,username);
   //writeln(ret,' ',password, ' ', d.cells[3,ret]);
   if (ret=-1) or (password <> TUser.Arr[ret][_password]) then
   begin
-    writeln(ret);
-    writeln(password);
-    writeln(TUser.Arr[ret][_password]);
+    // writeln(ret);
+    // writeln(password);
+    // writeln(TUser.Arr[ret][_password]);
     writeln('Username / password salah! Silakan coba lagi.');
     Role := '';
     TDestroy(TUser);
