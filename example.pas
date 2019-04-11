@@ -7,10 +7,12 @@ var
   TCSV: TCSVArr;
   aRow: TRow;
 begin
-  readCSV('Laporan_Buku_Hilang.csv',TCSV);
+  readCSV('Buku.csv',TCSV);
+  sortCSV(TCSV,1);
   TWrite(TCSV);
   while true do
   begin
+    // writeln(compareString(TCSV.Arr[TCSV.Row-1][1],TCSV.Arr[TCSV.Row-2][1]));
     writeln('Delete Row:');
     readln(i);
     if i>0 then

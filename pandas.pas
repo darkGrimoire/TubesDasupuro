@@ -12,12 +12,14 @@ Type
           end;
 const
   Delim =',';
-  Quote ='"'; 
+  Quote ='"';
 
 //Write Table of TCSV for debugging
 procedure TWrite(TCSV: TCSVArr);
+//CompareText buatan sendiri gara2 gabole makek sysutils
+function compareString(T1,T2: string): integer;
 //Sort TCSV with col as the pivot
-// procedure sortCSV(var TCSV: TCSVArr; col: integer);
+procedure sortCSV(var TCSV: TCSVArr; col: integer);
 //Parse string in csv format into TRow format
 function CSVParser(aText: string): TRow;
 //Append a row into the bottom-most TCSV
@@ -26,8 +28,6 @@ procedure addRow(var TCSV: TCSVArr; aRow: TRow);
 procedure removeRow(var TCSV: TCSVArr; row: integer);
 //Escapes '"' in text
 function escapeQuote(aText: string): string;
-//Descapes \" in text
-function descapeQuote(aText: string): string;
 //Read CSV File into TCSV
 procedure readCSV(const Filename: string; var TCSV: TCSVArr);
 //Convert a row from TCSV into string with csv format
@@ -51,12 +51,56 @@ begin
   end;
 end;
 
-// procedure sortCSV(var TCSV: TCSVArr; col: integer);
-// var
-//   i: integer;
-// begin
-//   for i:=0 to TCSV.
-// end;
+function compareString(T1,T2: string): integer;
+var
+  i,len: integer;
+begin
+  i:=1;
+  if Length(T2)<=Length(T1) then
+    len:= Length(T2)
+  else
+    len:= Length(T1);
+  Lowercase(T1);
+  Lowercase(T2);
+  while (Ord(T1[i])=Ord(T2[i])) and (i<=len) do
+    Inc(i);
+  if (i=len) and (i<>1) then
+  begin
+    if Length(T1)>Length(T2) then
+      compareString:=1
+    else if Length(T2)>Length(T1) then
+      compareString:=-1
+    else
+      compareString:=0;
+  end else
+  if (Ord(T1[i])>Ord(T2[i])) then
+    compareString:=1
+  else
+    compareString:=-1;
+end;
+
+procedure sortCSV(var TCSV: TCSVArr; col: integer);
+var
+  i,pass: integer;
+  tempRow: TRow;
+  unsorted: boolean;
+begin
+  SetLength(tempRow.Arr,TCSV.Col);
+  pass:=1; unsorted:= true;
+  while (pass<=TCSV.Row-1) and unsorted do
+  begin
+    unsorted:=false;
+    for i:=TCSV.Row-1 downto pass+1 do
+      if compareString(TCSV.Arr[i][col],TCSV.Arr[i-1][col])=-1 then
+      begin
+        tempRow.Arr := TCSV.Arr[i];
+        TCSV.Arr[i] := TCSV.Arr[i-1];
+        TCSV.Arr[i-1] := tempRow.Arr;
+        unsorted := true;
+      end;
+    inc(pass);
+  end;
+end;
 
 //Parse String menjadi bentuk TRow
 function CSVParser(aText: string): TRow;
@@ -77,6 +121,11 @@ begin
     SetLength(CSVParser.Arr,col+1);
     while Quotation do //Prosedur quotation, hanya berhenti ketika menemui quote berikutnya dan mengabaikan tanda delimiter
     begin
+      if (aText[i]=Quote) and (aText[i+1]=Quote) then
+      begin
+        CellBuffer:=CellBuffer+'"';
+        Inc(i,2);
+      end else
       if aText[i]=Quote then
       begin
         CSVParser.Arr[col]:=CellBuffer;
@@ -149,37 +198,16 @@ function escapeQuote(aText: string): string;
 var
   i,len: integer;
 begin
+  escapeQuote:='';
   len:=Length(aText);
-  SetLength(escapeQuote,len);
   for i:=1 to len do
   begin
     if (aText[i]='"') then
     begin
-      escapeQuote := escapeQuote + '\' + aText[i];
-      SetLength(escapeQuote,len+1);
+      escapeQuote := escapeQuote + '"' + aText[i];
     end else
     begin
       escapeQuote := escapeQuote + aText[i];
-    end;
-  end;
-end;
-
-//kembalikan \" menjadi bentuk '"' biasa
-function descapeQuote(aText: string): string;
-var
-  i,len: integer;
-begin
-  len:=Length(aText);
-  SetLength(descapeQuote,len);
-  for i:=1 to len do
-  begin
-    if (aText[i]='\') and (aText[i+1]='"') then
-    begin
-      descapeQuote := descapeQuote + '';
-      SetLength(descapeQuote,len-1);
-    end else
-    begin
-      descapeQuote := descapeQuote + aText[i];
     end;
   end;
 end;
@@ -198,8 +226,6 @@ begin
   while not eof(tfIn) do
   begin
     readln(tfIn, line);
-    if Pos(Quote,line)<>0 then //descape quotes
-      line:= descapeQuote(line);
     row:=CSVParser(line);
     addRow(TCSV,row);
   end;
@@ -216,7 +242,7 @@ begin
     if Pos(Quote,aRow.Arr[row][col])<>0 then //escape quotes
       aRow.Arr[row][col]:= escapeQuote(aRow.Arr[row][col]);
     // writeln(aRow.Arr[row][col]);
-    if Pos(Delim,aRow.Arr[row][col])<>0 then
+    if (Pos(Delim,aRow.Arr[row][col])<>0) or (Pos(Quote,aRow.Arr[row][col])<>0) then
     begin
     // writeln(Pos(Delim,aRow.Arr[row][col]));
       CSVBuilder:= CSVBuilder + Quote + aRow.Arr[row][col] + Quote + Delim;
@@ -225,7 +251,9 @@ begin
       CSVBuilder:= CSVBuilder + aRow.Arr[row][col] + Delim;
     end;
   end;
-  if Pos(Delim,aRow.Arr[row][col])<>0 then
+  if Pos(Quote,aRow.Arr[row][aRow.Col-1])<>0 then //escape quotes
+      aRow.Arr[row][aRow.Col-1]:= escapeQuote(aRow.Arr[row][aRow.Col-1]);
+  if Pos(Delim,aRow.Arr[row][aRow.Col-1])<>0 then
   begin
     CSVBuilder:= CSVBuilder + Quote + aRow.Arr[row][aRow.Col-1] + Quote;
   end else

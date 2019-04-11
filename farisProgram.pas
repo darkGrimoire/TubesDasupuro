@@ -53,6 +53,11 @@ begin
     isUsernameExist:=true;
 end;
 
+function isKategoriValid(Text: string) : boolean;
+begin
+  isKategoriValid := (Text='sastra') or (Text='sains') or (Text='manga') or (Text='sejarah') or (Text='programming');
+end;
+
 procedure register();
 var
   TUser: TCSVArr;
@@ -92,7 +97,8 @@ begin
         readln(input);
       end;
     if i=3 then
-      aRow.Arr[i]:=Crypt(input)
+      // aRow.Arr[i]:=Crypt(input)
+      aRow.Arr[i]:=input
     else
       aRow.Arr[i]:=input;
   end;
@@ -113,14 +119,14 @@ begin
   readln(username);
   write('Masukkan password: ');
   readln(password); writeln('');
-  password:=Crypt(password);
+  // password:=Crypt(password);
   ret := searchCellContain(TUser,_username,username);
   //writeln(ret,' ',password, ' ', d.cells[3,ret]);
   if (ret=-1) or (password <> TUser.Arr[ret][_password]) then
   begin
-    writeln(ret);
-    writeln(password);
-    writeln(TUser.Arr[ret][_password]);
+    // writeln(ret);
+    // writeln(password);
+    // writeln(TUser.Arr[ret][_password]);
     writeln('Username / password salah! Silakan coba lagi.');
     Role := '';
     TDestroy(TUser);
@@ -130,6 +136,51 @@ begin
     Role := TUser.Arr[ret,_role];
     TDestroy(TUser);
   end;
+end;
+
+procedure cariBukuKategori();
+var
+  d: tcsvdocument;
+  input: string;
+  i: integer;
+
+begin
+  d := tcsvdocument.create();
+  d.loadfromfile('Buku.csv');
+  write('Masukkan kategori: ');
+  readln(input);
+  while not isKategoriValid(input) do
+    begin
+      writeln('Kategori ', input, ' tidak valid.');
+      write('Masukkan kategori: ');
+      readln(input);
+    end;
+  writeln('');
+  i:=0;
+  while i < d.rowcount do
+  begin
+    if (input <> d.Cells[5,i]) then
+    begin
+      d.RemoveRow(i);
+    end else
+    begin
+      i:=i+1;
+    end;
+  end;
+  writeln('Hasil pencarian:');
+  if d.rowcount=0 then
+  begin
+    writeln('Tidak ada buku dalam kategori ini.');
+  end else
+  begin
+    for i:=0 to d.rowcount-1 do
+    begin
+      write(d.Cells[0,i]); write(' | ');
+      write(d.Cells[1,i]); write(' | ');
+      write(d.Cells[2,i]); writeln('');
+    end;
+  end;
+  d.destroy;
 end;
 
 begin
