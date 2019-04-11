@@ -12,14 +12,14 @@ Type
           end;
 const
   Delim =',';
-  Quote ='"'; 
+  Quote ='"';
 
 //Write Table of TCSV for debugging
 procedure TWrite(TCSV: TCSVArr);
 //CompareText buatan sendiri gara2 gabole makek sysutils
 function compareString(T1,T2: string): integer;
 //Sort TCSV with col as the pivot
-// procedure sortCSV(var TCSV: TCSVArr; col: integer);
+procedure sortCSV(var TCSV: TCSVArr; col: integer);
 //Parse string in csv format into TRow format
 function CSVParser(aText: string): TRow;
 //Append a row into the bottom-most TCSV
@@ -79,17 +79,28 @@ begin
     compareString:=-1;
 end;
 
-// procedure sortCSV(var TCSV: TCSVArr; col: integer);
-// var
-//   i,iMax: integer;
-// begin
-//   iMax:=0;
-//   for i:=0 to TCSV.Row-1 do
-//   begin
-//     if TCSV.Arr[i][col]>TCSV.Arr[iMax][col] then
-//     begin
-
-// end;
+procedure sortCSV(var TCSV: TCSVArr; col: integer);
+var
+  i,pass: integer;
+  tempRow: TRow;
+  unsorted: boolean;
+begin
+  SetLength(tempRow.Arr,TCSV.Col);
+  pass:=1; unsorted:= true;
+  while (pass<=TCSV.Row-1) and unsorted do
+  begin
+    unsorted:=false;
+    for i:=TCSV.Row-1 downto pass+1 do
+      if compareString(TCSV.Arr[i][col],TCSV.Arr[i-1][col])=-1 then
+      begin
+        tempRow.Arr := TCSV.Arr[i];
+        TCSV.Arr[i] := TCSV.Arr[i-1];
+        TCSV.Arr[i-1] := tempRow.Arr;
+        unsorted := true;
+      end;
+    inc(pass);
+  end;
+end;
 
 //Parse String menjadi bentuk TRow
 function CSVParser(aText: string): TRow;
@@ -110,17 +121,17 @@ begin
     SetLength(CSVParser.Arr,col+1);
     while Quotation do //Prosedur quotation, hanya berhenti ketika menemui quote berikutnya dan mengabaikan tanda delimiter
     begin
+      if (aText[i]=Quote) and (aText[i+1]=Quote) then
+      begin
+        CellBuffer:=CellBuffer+'"';
+        Inc(i,2);
+      end else
       if aText[i]=Quote then
       begin
         CSVParser.Arr[col]:=CellBuffer;
         CellBuffer:='';
         Quotation:=false;
         Inc(i,2); Inc(Col); //after end quotation always followed by delim
-      end else
-      if aText[i]=chr(14) then
-      begin
-        CellBuffer:=CellBuffer+'"';
-        Inc(i);
       end else
       begin
         CellBuffer:=CellBuffer+aText[i];
@@ -136,11 +147,6 @@ begin
     if aText[i]=Quote then //Pas di tengah2 ketemu quote
     begin
       Quotation:=true;
-      Inc(i);
-    end else
-    if aText[i]=chr(14) then
-    begin
-      CellBuffer:=CellBuffer+'"';
       Inc(i);
     end else
     begin
@@ -198,7 +204,7 @@ begin
   begin
     if (aText[i]='"') then
     begin
-      escapeQuote := escapeQuote + chr(14);
+      escapeQuote := escapeQuote + '"' + aText[i];
     end else
     begin
       escapeQuote := escapeQuote + aText[i];
@@ -236,7 +242,7 @@ begin
     if Pos(Quote,aRow.Arr[row][col])<>0 then //escape quotes
       aRow.Arr[row][col]:= escapeQuote(aRow.Arr[row][col]);
     // writeln(aRow.Arr[row][col]);
-    if Pos(Delim,aRow.Arr[row][col])<>0 then
+    if (Pos(Delim,aRow.Arr[row][col])<>0) or (Pos(Quote,aRow.Arr[row][col])<>0) then
     begin
     // writeln(Pos(Delim,aRow.Arr[row][col]));
       CSVBuilder:= CSVBuilder + Quote + aRow.Arr[row][col] + Quote + Delim;
