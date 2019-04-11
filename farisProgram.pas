@@ -9,6 +9,13 @@ const
   _password = 3;
   _role = 4;
 
+  _idBuku = 0;
+  _judulBuku = 1;
+  _author = 2;
+  _sumBuku = 3;
+  _tahun = 4;
+  _kategori = 5;
+
 var
   role: string;
   choice: integer;
@@ -55,7 +62,7 @@ end;
 
 function isKategoriValid(Text: string) : boolean;
 begin
-  isKategoriValid := (Text='sastra') or (Text='sains') or (Text='manga') or (Text='sejarah') or (Text='programming');
+  isKategoriValid := (Text='Sastra') or (Text='Sains') or (Text='Manga') or (Text='Sejarah') or (Text='Programming');
 end;
 
 procedure register();
@@ -140,13 +147,13 @@ end;
 
 procedure cariBukuKategori();
 var
-  d: tcsvdocument;
+  TBuku: TCSVArr;
   input: string;
   i: integer;
 
 begin
-  d := tcsvdocument.create();
-  d.loadfromfile('Buku.csv');
+  readCSV('Buku.csv',TBuku);
+  sortCSV(TBuku,_judulBuku);
   write('Masukkan kategori: ');
   readln(input);
   while not isKategoriValid(input) do
@@ -157,30 +164,77 @@ begin
     end;
   writeln('');
   i:=0;
-  while i < d.rowcount do
+  while i < TBuku.Row do
   begin
-    if (input <> d.Cells[5,i]) then
-    begin
-      d.RemoveRow(i);
-    end else
-    begin
-      i:=i+1;
-    end;
+    if (input <> TBuku.Arr[i][_kategori]) then
+      removeRow(TBuku,i)
+    else
+      inc(i);
   end;
   writeln('Hasil pencarian:');
-  if d.rowcount=0 then
+  if TBuku.Row=0 then
   begin
     writeln('Tidak ada buku dalam kategori ini.');
   end else
   begin
-    for i:=0 to d.rowcount-1 do
+    for i:=0 to TBuku.Row-1 do
     begin
-      write(d.Cells[0,i]); write(' | ');
-      write(d.Cells[1,i]); write(' | ');
-      write(d.Cells[2,i]); writeln('');
+      write(TBuku.Arr[i][_idBuku]); write(' | ');
+      write(TBuku.Arr[i][_judulBuku]); write(' | ');
+      write(TBuku.Arr[i][_author]); writeln('');
     end;
   end;
-  d.destroy;
+  TDestroy(TBuku);
+end;
+
+function isValidTahun(i: integer; optr: string; j: integer): boolean;
+begin
+  case optr of
+    '=' : isValidTahun:= i=j;
+    '<' : isValidTahun:= i<j;
+    '>' : isValidTahun:= i>j;
+    '>=' : isValidTahun:= i>=j;
+    '<=' : isValidTahun:= i<=j;
+  end;
+end;
+
+procedure cariBukuTahun();
+var
+  TBuku: TCSVArr;
+  inOpt: string;
+  input,i,tahun: integer;
+
+begin
+  readCSV('Buku.csv',TBuku);
+  sortCSV(TBuku,_judulBuku);
+  write('Masukkan tahun: ');
+  readln(input);
+  write('Masukkan kategori: ');
+  readln(inOpt);
+  writeln;
+  i:=0;
+  while i < TBuku.Row do
+  begin
+    Val(TBuku.Arr[i][_tahun],tahun);
+    if not isValidTahun(tahun,inOpt,input) then
+      removeRow(TBuku,i)
+    else
+      inc(i);
+  end;
+  writeln('Hasil pencarian:');
+  if TBuku.Row=0 then
+  begin
+    writeln('Tidak ada buku dalam kategori ini.');
+  end else
+  begin
+    for i:=0 to TBuku.Row-1 do
+    begin
+      write(TBuku.Arr[i][_idBuku]); write(' | ');
+      write(TBuku.Arr[i][_judulBuku]); write(' | ');
+      write(TBuku.Arr[i][_author]); writeln('');
+    end;
+  end;
+  TDestroy(TBuku);
 end;
 
 begin
@@ -207,20 +261,18 @@ begin
     writeln('-----MENU [WIP]-----');
     writeln('[1] Registrasi Akun ');
     writeln('[2] Login Akun');
-    writeln('[3] Cari Buku (Kategori)'); writeln('');
+    writeln('[3] Cari Buku (Kategori)');
+    writeln('[4] Cari Buku (Tahun)'); writeln('');
     write('Pilihan: ');
     readln(choice);
     case choice of
-      1 : begin
-          register();
-          end;
+      1 : register();
       2 : begin
           login(role);
           writeln(role);
           end;
-      // 3 : begin
-      //     cariBukuKategori();
-      //     end;
+      3 : cariBukuKategori();
+      4 : cariBukuTahun();
     end;
     writeln('---'); writeln('');
   end;
