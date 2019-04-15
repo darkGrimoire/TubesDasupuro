@@ -4,15 +4,38 @@ uses pandas, crt;
 var
   line: string;
   key: char;
+  specialChar: boolean = false;
 
 begin
 line:='';
 key:=readkey;
 while ord(key)<>13 do
 begin
-
+  if ord(key)=8 then
+  begin
+    write(key);
+    write(' ');
+    write(key);
+    delete(line,Length(line),1);
+  end else
+  if ord(key)=0 then
+  begin
+    specialChar:=true;
+  end else
+  if (ord(key)>31) and (ord(key)<126) then
+  begin
+    if not specialChar then
+    begin
+      write('*');
+      line:= line + key
+    end else
+    begin
+      specialChar:=false;
+    end;
+  end;
   key:=readkey;
 end;
+writeln;
 writeln(line);
 end.
 // begin
