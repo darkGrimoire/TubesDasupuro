@@ -112,8 +112,10 @@ var
 begin
   readCSV('user.csv',TUser);
   SetLength(aRow.Arr,TUser.Col);
+  writeln('Kosongkan input untuk UNDO');
   //TWrite(TUser);
-  for i:=0 to TUser.Col-1 do
+  i:=0;
+  while i<=TUser.Col-1 do
   begin
     case i of
       0 : begin
@@ -132,22 +134,38 @@ begin
           write('Masukkan role: ');
           end;
     end;
+    //input
     if i=3 then
       readMasked(input)
     else
       readln(input);
-    if i=2 then
-      while isUsernameExist(TUser,input) do
+    //UNDO
+    if input='' then
+    begin
+      if i=0 then
       begin
-        writeln('Username Sudah ada!');
-        write('Masukkan username: ');
-        readln(input);
-      end;
-    if i=3 then
-      // aRow.Arr[i]:=Crypt(input)
-      aRow.Arr[i]:=input
-    else
-      aRow.Arr[i]:=input;
+        dec(i);
+        writeln('TIDAK BISA UNDO');
+      end else
+        dec(i,2);
+    end else
+    begin
+      //validation
+      if i=2 then
+        while isUsernameExist(TUser,input) do
+        begin
+          writeln('Username Sudah ada!');
+          write('Masukkan username: ');
+          readln(input);
+        end;
+      //process
+      if i=3 then
+        // aRow.Arr[i]:=Crypt(input)
+        aRow.Arr[i]:=input
+      else
+        aRow.Arr[i]:=input;
+    end;
+    inc(i);
   end;
   addRow(TUser,aRow);
   writeCSV('user.csv',TUser);
@@ -165,7 +183,7 @@ begin
   write('Masukkan username: ');
   readln(username);
   write('Masukkan password: ');
-  readln(password); writeln('');
+  readMasked(password); writeln;
   // password:=Crypt(password);
   ret := searchCellContain(TUser,_username,username);
   //writeln(ret,' ',password, ' ', d.cells[3,ret]);
