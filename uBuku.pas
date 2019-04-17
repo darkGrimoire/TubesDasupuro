@@ -13,10 +13,13 @@ const
 { Subprogram Pembantu }
 function isKategoriValid(Text: string) : boolean;
 function isValidTahun(i: integer; optr: string; j: integer): boolean;
+function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
 
 { Modul Utama }
 procedure cariBukuKategori();
 procedure cariBukuTahun();
+procedure tambahBuku(TBuku: TCSVArr);
+procedure tambahJumlahBuku(var TBuku: TCSVArr);
 
 implementation
 
@@ -36,6 +39,21 @@ begin
     '<=' : isValidTahun:= i<=j;
   end;
 end;
+
+function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
+var
+  i: integer;
+begin
+  i:=0;
+  searchCellContain:=-1;
+  while (i<=TCSV.Row-1) and (searchCellContain=-1) do
+  begin
+    if Text=TCSV.Arr[i][Where] then
+      searchCellContain:=i;
+    Inc(i);
+  end;
+end;
+
 
 { Modul Utama }
 
@@ -123,5 +141,69 @@ begin
   readkey;
   TDestroy(TBuku);
 end;
+
+procedure tambahBuku(TBuku: TCSVArr);
+
+var
+	
+	new: TRow;
+	input: string;
+	i: integer;
+
+
+begin
+	SetLength(new.Arr,TBuku.Col);
+	writeln('Masukkan data buku: ');
+	for i := 0 to TBuku.Col-1 do 
+	begin
+		case i of 
+		0 : begin
+			write('ID Buku: ');
+			end;
+		1 : begin
+			write('Judul Buku: ');
+			end;
+		2 : begin
+			write('Author: ');
+			end;
+		3 : begin
+			write('Jumlah Buku: ');
+			end;
+		4 : begin
+			write('Tahun penerbitan: ');
+			end;
+		5 : begin
+			write('Kategori: ');
+			end;
+		end;
+	readln(input);
+	new.Arr[i] := input;
+	end;
+	addRow(TBuku,new);
+	writeCSV('Buku.csv', TBuku);
+	TWrite(TBuku);
+
+end;
+
+procedure tambahJumlahBuku(var TBuku: TCSVArr);
+	var
+		input, sJumlah: string;
+		new, rowbuku, vJumlah: integer;
+
+	begin
+		writeln('Masukkan judul buku: ');
+		readln(input);
+		rowbuku := searchCellContain(TBuku, 1, input);
+		
+		write('Masukkan jumlah tambahan buku: ');
+		readln(new);
+		val(TBuku.Arr[rowbuku][3], vJumlah);
+		vJumlah := vJumlah + new;
+		str(vJumlah, sJumlah);
+		TBuku.Arr[rowbuku][3] := sJumlah;
+		writeln('Jumlah buku berhasil diperbarui.');
+		
+
+	end;
 
 end.
