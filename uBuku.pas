@@ -201,6 +201,7 @@ procedure tambahJumlahBuku(var TBuku: TCSVArr);
 		vJumlah := vJumlah + new;
 		str(vJumlah, sJumlah);
 		TBuku.Arr[rowbuku][3] := sJumlah;
+		writeCSV('Buku.csv', TBuku);
 		writeln('Jumlah buku berhasil diperbarui.');
 		
 
