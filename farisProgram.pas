@@ -51,8 +51,11 @@ begin
   begin
     write(key);
     write(' ');
-    write(key);
-    delete(line,Length(line),1);
+    if length(line)<>0 then
+    begin
+      write(key);
+      delete(line,Length(line),1);
+    end;
   end else
   if ord(key)=0 then
   begin
@@ -63,7 +66,7 @@ begin
     if not specialChar then
     begin
       write('*');
-      line:= line + key
+      line:= line + key;
     end else
     begin
       specialChar:=false;
@@ -107,37 +110,50 @@ var
   TUser: TCSVArr;
   aRow: TRow;
   i: integer;
-  input: string;
+  input,input2: string;
 
 begin
   readCSV('user.csv',TUser);
   SetLength(aRow.Arr,TUser.Col);
-  writeln('Kosongkan input untuk UNDO');
+  Clrscr();
+  writeln('Kosongkan input untuk UNDO'); writeln;
   //TWrite(TUser);
   i:=0;
   while i<=TUser.Col-1 do
   begin
     case i of
       0 : begin
-          write('Masukkan nama: ');
+          write('Masukkan nama: ');  //write(wherex(), ' ', wherey());
           end;
       1 : begin
-          write('Masukkan alamat: ');
+          write('Masukkan alamat: ');  //write(wherex(), ' ', wherey());
           end;
       2 : begin
-          write('Masukkan username: ');
+          write('Masukkan username: ');  //write(wherex(), ' ', wherey());
           end;
       3 : begin
-          write('Masukkan password: ');
+          write('Masukkan password: ');  //write(wherex(), ' ', wherey());
           end;
       4 : begin
-          write('Masukkan role: ');
+          write('Masukkan role: ');  //write(wherex(), ' ', wherey());
           end;
     end;
     //input
     if i=3 then
-      readMasked(input)
-    else
+    begin
+      readMasked(input);
+      if input<>'' then
+      begin
+        write('Konfirmasi Password: ');
+        readMasked(input2);
+      end;
+      if (input<>input2) and (input<>'') then
+      begin
+        writeln('Password salah! Ulangi.');
+        inc(i);
+        input:='';
+      end;
+    end else
       readln(input);
     //UNDO
     if input='' then
@@ -147,7 +163,11 @@ begin
         dec(i);
         writeln('TIDAK BISA UNDO');
       end else
+      begin
+        DelLine;
         dec(i,2);
+        DelLine;
+      end;
     end else
     begin
       //validation
@@ -179,6 +199,7 @@ var
   ret: integer;
 begin
   readCSV('user.csv',TUser);
+  Clrscr();
   TWrite(TUser);
   write('Masukkan username: ');
   readln(username);
@@ -199,8 +220,10 @@ begin
   begin
     writeln('Selamat datang ', TUser.Arr[ret,_nama], '!');
     Role := TUser.Arr[ret,_role];
+    writeln(Role);
     TDestroy(TUser);
   end;
+  readkey;
 end;
 
 procedure cariBukuKategori();
@@ -212,6 +235,7 @@ var
 begin
   readCSV('Buku.csv',TBuku);
   sortCSV(TBuku,_judulBuku);
+  Clrscr();
   write('Masukkan kategori: ');
   readln(input);
   while not isKategoriValid(input) do
@@ -242,6 +266,7 @@ begin
       write(TBuku.Arr[i][_author]); writeln('');
     end;
   end;
+  readkey;
   TDestroy(TBuku);
 end;
 
@@ -265,6 +290,7 @@ var
 begin
   readCSV('Buku.csv',TBuku);
   sortCSV(TBuku,_judulBuku);
+  Clrscr();
   write('Masukkan tahun: ');
   readln(input);
   write('Masukkan kategori: ');
@@ -292,6 +318,7 @@ begin
       write(TBuku.Arr[i][_author]); writeln('');
     end;
   end;
+  readkey;
   TDestroy(TBuku);
 end;
 
@@ -316,6 +343,7 @@ begin
   //register();
   while true do
   begin
+    Clrscr();
     writeln('-----MENU [WIP]-----');
     writeln('[1] Registrasi Akun ');
     writeln('[2] Login Akun');

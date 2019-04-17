@@ -8,6 +8,7 @@ var
 
 begin
 line:='';
+ClrScr();
 key:=readkey;
 while ord(key)<>13 do
 begin

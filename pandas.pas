@@ -62,21 +62,24 @@ begin
     len:= Length(T1);
   Lowercase(T1);
   Lowercase(T2);
-  while (Ord(T1[i])=Ord(T2[i])) and (i<=len) do
+  while (Ord(T1[i])=Ord(T2[i])) and (i<len) do
     Inc(i);
-  if (i=len) and (i<>1) then
+  if (Ord(T1[i])>Ord(T2[i])) then
   begin
-    if Length(T1)>Length(T2) then
+    compareString:=1
+  end else
+  if (Ord(T1[i])<Ord(T2[i])) then
+  begin
+    compareString:=-1
+  end else
+  begin
+    if length(T1)>length(T2) then
       compareString:=1
-    else if Length(T2)>Length(T1) then
+    else if length(T1)<length(T2) then
       compareString:=-1
     else
       compareString:=0;
-  end else
-  if (Ord(T1[i])>Ord(T2[i])) then
-    compareString:=1
-  else
-    compareString:=-1;
+  end;
 end;
 
 procedure sortCSV(var TCSV: TCSVArr; col: integer);
