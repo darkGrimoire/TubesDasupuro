@@ -16,6 +16,8 @@ const
 
 //Write Table of TCSV for debugging
 procedure TWrite(TCSV: TCSVArr);
+//bisa nyari Text dalam TCSV pada Kolom (Where) tertentu
+function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
 //CompareText buatan sendiri gara2 gabole makek sysutils
 function compareString(T1,T2: string): integer;
 //Sort TCSV with col as the pivot
@@ -48,6 +50,20 @@ begin
     for j:=Low(TCSV.Arr[i]) to High(TCSV.Arr[i]) do
       Write(TCSV.Arr[i][j], '..'); //tabel dipisahkan dengan ..
     WriteLn('|'); //batas akhir satu row
+  end;
+end;
+
+function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
+var
+  i: integer;
+begin
+  i:=0;
+  searchCellContain:=-1;
+  while (i<=TCSV.Row-1) and (searchCellContain=-1) do
+  begin
+    if Text=TCSV.Arr[i][Where] then
+      searchCellContain:=i;
+    Inc(i);
   end;
 end;
 

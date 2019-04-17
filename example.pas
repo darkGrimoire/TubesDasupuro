@@ -39,6 +39,12 @@ end;
 writeln;
 writeln(line);
 end.
+
+// var
+//   TCSV: TCSVArr;
+//   i: integer;
+//   str: string;
+//   aRow: TRow;
 // begin
 //   readCSV('Buku.csv',TCSV);
 //   sortCSV(TCSV,1);
@@ -53,13 +59,14 @@ end.
 //       removeRow(TCSV,i);
 //     end else
 //     begin
-//     writeln('Append Mode with row: ',TCSV.Row,' and col: ',TCSV.Col);
-//     readln(str);
-//     aRow:=(CSVParser(str));
-//     addRow(TCSV,aRow);
+//       writeln('Append Mode with row: ',TCSV.Row,' and col: ',TCSV.Col);
+//       readln(str);
+//       aRow:=(CSVParser(str));
+//       addRow(TCSV,aRow);
 //     end;
 //     TWrite(TCSV);
 //   end;
+  
   // //input
   // readln(txt);
   // while txt<>-999 do

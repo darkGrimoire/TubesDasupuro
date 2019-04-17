@@ -1,6 +1,7 @@
-Program mainFaris;
+unit uUser;
 
-uses pandas,crt;
+interface
+uses pandas, crt;
 
 const
   _nama = 0;
@@ -9,16 +10,19 @@ const
   _password = 3;
   _role = 4;
 
-  _idBuku = 0;
-  _judulBuku = 1;
-  _author = 2;
-  _sumBuku = 3;
-  _tahun = 4;
-  _kategori = 5;
+{ Subprogram Pembantu }
+function Crypt(aText: string): string;
+function Decrypt(aText: string): string;
+procedure hashPassword(var TCSV: TCSVArr);
+procedure unhashPassword(var TCSV: TCSVArr);
+procedure readMasked(var line: string);
+function isUsernameExist(TCSV: TCSVArr; Text: string) : boolean;
 
-var
-  role: string;
-  choice: integer;
+{ Modul Utama }
+procedure register();
+procedure login(var Role : string);
+
+implementation
 
 function Crypt(aText: string): string;
 const
@@ -247,140 +251,4 @@ begin
   readkey;
 end;
 
-procedure cariBukuKategori();
-var
-  TBuku: TCSVArr;
-  input: string;
-  i: integer;
-
-begin
-  readCSV('Buku.csv',TBuku);
-  sortCSV(TBuku,_judulBuku);
-  Clrscr();
-  write('Masukkan kategori: ');
-  readln(input);
-  while not isKategoriValid(input) do
-    begin
-      writeln('Kategori ', input, ' tidak valid.');
-      write('Masukkan kategori: ');
-      readln(input);
-    end;
-  writeln('');
-  i:=0;
-  while i < TBuku.Row do
-  begin
-    if (input <> TBuku.Arr[i][_kategori]) then
-      removeRow(TBuku,i)
-    else
-      inc(i);
-  end;
-  writeln('Hasil pencarian:');
-  if TBuku.Row=0 then
-  begin
-    writeln('Tidak ada buku dalam kategori ini.');
-  end else
-  begin
-    for i:=0 to TBuku.Row-1 do
-    begin
-      write(TBuku.Arr[i][_idBuku]); write(' | ');
-      write(TBuku.Arr[i][_judulBuku]); write(' | ');
-      write(TBuku.Arr[i][_author]); writeln('');
-    end;
-  end;
-  readkey;
-  TDestroy(TBuku);
-end;
-
-function isValidTahun(i: integer; optr: string; j: integer): boolean;
-begin
-  case optr of
-    '=' : isValidTahun:= i=j;
-    '<' : isValidTahun:= i<j;
-    '>' : isValidTahun:= i>j;
-    '>=' : isValidTahun:= i>=j;
-    '<=' : isValidTahun:= i<=j;
-  end;
-end;
-
-procedure cariBukuTahun();
-var
-  TBuku: TCSVArr;
-  inOpt: string;
-  input,i,tahun: integer;
-
-begin
-  readCSV('Buku.csv',TBuku);
-  sortCSV(TBuku,_judulBuku);
-  Clrscr();
-  write('Masukkan tahun: ');
-  readln(input);
-  write('Masukkan kategori: ');
-  readln(inOpt);
-  writeln;
-  i:=1;
-  while i < TBuku.Row do
-  begin
-    Val(TBuku.Arr[i][_tahun],tahun);
-    if not isValidTahun(tahun,inOpt,input) then
-      removeRow(TBuku,i)
-    else
-      inc(i);
-  end;
-  writeln('Hasil pencarian:');
-  if TBuku.Row=1 then
-  begin
-    writeln('Tidak ada buku dalam kategori ini.');
-  end else
-  begin
-    for i:=0 to TBuku.Row-1 do
-    begin
-      write(TBuku.Arr[i][_idBuku]); write(' | ');
-      write(TBuku.Arr[i][_judulBuku]); write(' | ');
-      write(TBuku.Arr[i][_author]); writeln('');
-    end;
-  end;
-  readkey;
-  TDestroy(TBuku);
-end;
-
-begin
-  {
-  d := tcsvdocument.create();
-  d.loadFromFile('User.csv');
-  for y:=0 to d.rowcount-1 do
-  begin
-    for x:=0 to d.maxcolcount-1 do
-    begin
-      write('"', d.cells[x,y], '" ');
-    end;
-    writeln();
-  end;
-  writeln();
-  }
-  //txt:=Crypt('Shafa Amarsya Madyaratri 16518336');
-  //writeln('Encrypted: ', txt);
-  //writeln('Decrypted: ', Crypt(txt));
-  //writeln();
-  //register();
-  while true do
-  begin
-    Clrscr();
-    writeln('-----MENU [WIP]-----');
-    writeln('[1] Registrasi Akun ');
-    writeln('[2] Login Akun');
-    writeln('[3] Cari Buku (Kategori)');
-    writeln('[4] Cari Buku (Tahun)'); writeln('');
-    write('Pilihan: ');
-    readln(choice);
-    case choice of
-      1 : register();
-      2 : begin
-          login(role);
-          writeln(role);
-          end;
-      3 : cariBukuKategori();
-      4 : cariBukuTahun();
-    end;
-    writeln('---'); writeln('');
-  end;
 end.
