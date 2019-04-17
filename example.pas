@@ -1,32 +1,72 @@
 Program Example42;
 
-uses pandas;
+uses pandas, crt;
 var
-  i: integer;
-  str: string;
-  TCSV: TCSVArr;
-  aRow: TRow;
+  line: string;
+  key: char;
+  specialChar: boolean = false;
+
 begin
-  readCSV('Buku.csv',TCSV);
-  sortCSV(TCSV,1);
-  TWrite(TCSV);
-  while true do
+line:='';
+ClrScr();
+key:=readkey;
+while ord(key)<>13 do
+begin
+  if ord(key)=8 then
   begin
-    // writeln(compareString(TCSV.Arr[TCSV.Row-1][1],TCSV.Arr[TCSV.Row-2][1]));
-    writeln('Delete Row:');
-    readln(i);
-    if i>0 then
+    write(key);
+    write(' ');
+    write(key);
+    delete(line,Length(line),1);
+  end else
+  if ord(key)=0 then
+  begin
+    specialChar:=true;
+  end else
+  if (ord(key)>31) and (ord(key)<126) then
+  begin
+    if not specialChar then
     begin
-      removeRow(TCSV,i);
+      write('*');
+      line:= line + key
     end else
     begin
-    writeln('Append Mode with row: ',TCSV.Row,' and col: ',TCSV.Col);
-    readln(str);
-    aRow:=(CSVParser(str));
-    addRow(TCSV,aRow);
+      specialChar:=false;
     end;
-    TWrite(TCSV);
   end;
+  key:=readkey;
+end;
+writeln;
+writeln(line);
+end.
+
+// var
+//   TCSV: TCSVArr;
+//   i: integer;
+//   str: string;
+//   aRow: TRow;
+// begin
+//   readCSV('Buku.csv',TCSV);
+//   sortCSV(TCSV,1);
+//   TWrite(TCSV);
+//   while true do
+//   begin
+//     // writeln(compareString(TCSV.Arr[TCSV.Row-1][1],TCSV.Arr[TCSV.Row-2][1]));
+//     writeln('Delete Row:');
+//     readln(i);
+//     if i>0 then
+//     begin
+//       removeRow(TCSV,i);
+//     end else
+//     begin
+//       writeln('Append Mode with row: ',TCSV.Row,' and col: ',TCSV.Col);
+//       readln(str);
+//       aRow:=(CSVParser(str));
+//       addRow(TCSV,aRow);
+//     end;
+//     TWrite(TCSV);
+//   end;
+  
   // //input
   // readln(txt);
   // while txt<>-999 do

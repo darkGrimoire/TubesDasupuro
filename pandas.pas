@@ -16,6 +16,8 @@ const
 
 //Write Table of TCSV for debugging
 procedure TWrite(TCSV: TCSVArr);
+//bisa nyari Text dalam TCSV pada Kolom (Where) tertentu
+function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
 //CompareText buatan sendiri gara2 gabole makek sysutils
 function compareString(T1,T2: string): integer;
 //Sort TCSV with col as the pivot
@@ -51,6 +53,20 @@ begin
   end;
 end;
 
+function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
+var
+  i: integer;
+begin
+  i:=0;
+  searchCellContain:=-1;
+  while (i<=TCSV.Row-1) and (searchCellContain=-1) do
+  begin
+    if Text=TCSV.Arr[i][Where] then
+      searchCellContain:=i;
+    Inc(i);
+  end;
+end;
+
 function compareString(T1,T2: string): integer;
 var
   i,len: integer;
@@ -62,21 +78,24 @@ begin
     len:= Length(T1);
   Lowercase(T1);
   Lowercase(T2);
-  while (Ord(T1[i])=Ord(T2[i])) and (i<=len) do
+  while (Ord(T1[i])=Ord(T2[i])) and (i<len) do
     Inc(i);
-  if (i=len) and (i<>1) then
+  if (Ord(T1[i])>Ord(T2[i])) then
   begin
-    if Length(T1)>Length(T2) then
+    compareString:=1
+  end else
+  if (Ord(T1[i])<Ord(T2[i])) then
+  begin
+    compareString:=-1
+  end else
+  begin
+    if length(T1)>length(T2) then
       compareString:=1
-    else if Length(T2)>Length(T1) then
+    else if length(T1)<length(T2) then
       compareString:=-1
     else
       compareString:=0;
-  end else
-  if (Ord(T1[i])>Ord(T2[i])) then
-    compareString:=1
-  else
-    compareString:=-1;
+  end;
 end;
 
 procedure sortCSV(var TCSV: TCSVArr; col: integer);
