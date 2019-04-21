@@ -14,6 +14,38 @@ const
   Delim =',';
   Quote ='"';
 
+  {BUKU.CSV CONST}
+  _idBuku = 0;
+  _judulBuku = 1;
+  _author = 2;
+  _sumBuku = 3;
+  _tahun = 4;
+  _kategori = 5;
+
+  {USER.CSV CONST}
+  _nama = 0;
+  _alamat = 1;
+  _username = 2;
+  _password = 3;
+  _role = 4;
+
+  {LAPORAN_BUKU_HILANG.CSV CONST}
+  _idHilang = 0;
+  _judulHilang = 1;
+  _tanggalLaporan = 2;
+
+  {HISTORY_PEMINJAMAN.CSV CONST}
+  _user = 0;
+  _idPinjam = 1;
+  _tanggalPinjam = 2;
+  _tanggalBatas = 3;
+  _status = 4;
+  
+  {HISTORY_PENGEMBALIAN.CSV CONST}
+  // _user = 0;
+  _idKembali = 1;
+  _tanggalKembali = 2;
+
 //Write Table of TCSV for debugging
 procedure TWrite(TCSV: TCSVArr);
 //bisa nyari Text dalam TCSV pada Kolom (Where) tertentu
@@ -105,11 +137,11 @@ var
   unsorted: boolean;
 begin
   SetLength(tempRow.Arr,TCSV.Col);
-  pass:=1; unsorted:= true;
+  pass:=0; unsorted:= true;
   while (pass<=TCSV.Row-1) and unsorted do
   begin
     unsorted:=false;
-    for i:=TCSV.Row-1 downto pass+1 do
+    for i:=TCSV.Row-1 downto pass+2 do
       if compareString(TCSV.Arr[i][col],TCSV.Arr[i-1][col])=-1 then
       begin
         tempRow.Arr := TCSV.Arr[i];

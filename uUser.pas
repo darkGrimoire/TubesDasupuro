@@ -3,13 +3,6 @@ unit uUser;
 interface
 uses pandas, crt;
 
-const
-  _nama = 0;
-  _Alamat = 1;
-  _username = 2;
-  _password = 3;
-  _role = 4;
-
 { Subprogram Pembantu }
 function Crypt(aText: string): string;
 function Decrypt(aText: string): string;
@@ -20,7 +13,8 @@ function isUsernameExist(TCSV: TCSVArr; Text: string) : boolean;
 
 { Modul Utama }
 procedure register(var TUser: TCSVArr);
-procedure login(var Role : string; var TUser: TCSVArr);
+procedure login(var Role : string; var loggedUser: string; var TUser: TCSVArr);
+procedure cariAnggota(TUser: TCSVArr);
 
 implementation
 
@@ -137,7 +131,7 @@ begin
   // readCSV('user.csv',TUser);
   SetLength(aRow.Arr,TUser.Col);
   // hashPassword(TUser);
-  // Clrscr();
+  Clrscr();
   writeln('Kosongkan input untuk UNDO'); writeln;
   //TWrite(TUser);
   i:=0;
@@ -214,7 +208,7 @@ begin
   // TDestroy(TUser);
 end;
 
-procedure login(var Role : string; var TUser: TCSVArr);
+procedure login(var Role : string; var loggedUser: string; var TUser: TCSVArr);
 var
   username,password: string;
   ret: integer;
@@ -238,14 +232,39 @@ begin
     // writeln(TUser.Arr[ret][_password]);
     writeln('Username / password salah! Silakan coba lagi.');
     Role := '';
+    loggedUser := '';
     // TDestroy(TUser);
   end else
   begin
     writeln('Selamat datang ', TUser.Arr[ret,_nama], '!');
     Role := TUser.Arr[ret,_role];
-    writeln(Role);
+    loggedUser := TUser.Arr[ret,_username];
+    // writeln(Role);
     // TDestroy(TUser);
   end;
+  writeln; writeln('Tekan tombol apapun untuk melanjutkan');
+  readkey;
+end;
+
+procedure cariAnggota(TUser: TCSVArr);
+var
+  input: string;
+  ret: integer;
+
+begin
+  Clrscr;
+  write('Masukkan username: ');
+  readln(input);
+  ret:=searchCellContain(TUser,_username,input);
+  if ret<>-1 then
+  begin
+    writeln('Nama Anggota: ', TUser.Arr[ret][_nama]);
+    writeln('Alamat Anggota: ', TUser.Arr[ret][_alamat]);
+  end else //ret=-1, not found
+  begin
+    writeln('Anggota tidak ditemukan!');
+  end;
+  writeln; writeln('Tekan tombol apapun untuk melanjutkan');
   readkey;
 end;
 
