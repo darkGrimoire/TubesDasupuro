@@ -1,31 +1,31 @@
-26150,Black Butler Vol. 11,Yana Toboso,42,2009,Manga
-27153,Black Butler Vol. 12,Yana Toboso,49,2010,Manga
-17059,Calculus,Edwin J. Purcell,33,1969,Sains
-16069,Campbell Biology I,Jane Reece,3,1997,Sains
-14844,Campbell Biology II,Jane Reece,47,1970,Sains
-18340,Campbell Biology III,Jane Reece,28,2015,Sains
-14445,Chemistry,Raymond Chang,20,1986,Sains
-21874,Doraemon Vol. 17,Fujiko F. Fujio,28,1996,Manga
-14463,Fluid Mechanics,Sana Bakoush,7,2003,Sains
-12967,Fundamental of Electric Circuits,Mattew Sadiku,9,1984,Sains
-41352,Game of Thrones,George R. R. Martin,4,2006,Sastra
-12345,Hewwo,Fawwis,35,2018,Sains
-24926,"Hi, Miiko! Vol. 15",Ono Eriko,10,2008,Manga
-13663,Introduction to Neuroscience,Vilde Lien,6,1952,Sains
-41691,Kubah,Ahmad Tohari,136,1972,Sastra
-38628,Master C Language in No Time,Noora Saetre,21,1961,Programming
-22263,Naruto Vol. 48,Masashu Kishimoto,7,1992,Manga
-39952,Paradigms of Programming,Willhelm Magnusson,50,2010,Programming
-39507,Pascal Made Easy,Eleonora Sava,5,1963,Programming
-33677,Procedural Programming,Isak Yaki,31,1990,Programming
-35555,Programming with Java,Scrooge McDuck,48,1981,Programming
-30557,Programming with Pascal,Josefine,37,2006,Programming
-42968,Ronggeng Dukuh Paruk,Ahmad Tohari,24,1972,Sastra
-31404,Ruby in a Nutshell,Eva Mohn,37,2009,Programming
-48954,Sherlock Holmes,Sir Arthur Conan Doyle,39,2004,Sastra
-22381,Slam Dunk Vol.1,Takehiko Inoue,15,1990,Manga
-27546,Slam Dunk Vol.2,Takehiko Inoue,15,1990,Manga
-36589,The History of Computation,Eva Brighi,40,1965,Programming
-42377,Wuthering Heights,Emily Bronte,9,2018,Sastra
-42377,Wuthering Heights,Emily Bronte,9,2018,Sastra
-42377,Wuthering Heights,Emily Bronte,9,2018,Sastra
+ID_Buku	Judul_Buku	Author	Jumlah_Buku	Tahun_Penerbit	Kategori
+42377	Wuthering Heights	Emily Bronte	9	2018	Sastra
+22381	Slam Dunk Vol.1	Takehiko Inoue	10	1990	Manga
+43798	Anna Karenina	Leo Tolstoy	36	1982	Sastra
+39507	Pascal Made Easy	Eleonora Sava	5	1963	Programming
+12967	Fundamental of Electric Circuits	Mattew Sadiku	9	1984	Sains
+22263	Naruto Vol. 48	Masashu Kishimoto	7	1992	Manga
+16069	Campbell Biology I	Jane Reece	3	1997	Sains
+14844	Campbell Biology II	Jane Reece	47	1970	Sains
+26150	Black Butler Vol. 11	Yana Toboso	42	2009	Manga
+27153	Black Butler Vol. 12	Yana Toboso	49	2010	Manga
+18340	Campbell Biology III	Jane Reece	28	2015	Sains
+38628	Master C Language in No Time	Noora Saetre	21	1961	Programming
+14445	Chemistry	Raymond Chang	20	1986	Sains
+27546	Slam Dunk Vol.2	Takehiko Inoue	15	1990	Manga
+48954	Sherlock Holmes	Sir Arthur Conan Doyle	39	2004	Sastra
+36589	The History of Computation	Eva Brighi	40	1965	Programming
+31404	Ruby in a Nutshell	Eva Mohn	37	2009	Programming
+42968	Ronggeng Dukuh Paruk	Ahmad Tohari	24	1972	Sastra
+21874	Doraemon Vol. 17	Fujiko F. Fujio	28	1996	Manga
+17059	Calculus	Edwin J. Purcell	33	1969	Sains
+41691	Kubah	Ahmad Tohari	36	1972	Sastra
+"24926,Hi, Miiko! Vol. 15,Ono Eriko,10,2008,Manga"					
+14463	Fluid Mechanics	Sana Bakoush	7	2003	Sains
+39952	Paradigms of Programming	Willhelm Magnusson	50	2010	Programming
+33677	Procedural Programming	Isak Yaki	31	1990	Programming
+30557	Programming with Pascal	Josefine	37	2006	Programming
+13663	Introduction to Neuroscience	Vilde Lien	6	1952	Sains
+19110	Anatomy of Mammals	Nikolai Magnusson	4	1951	Sains
+41352	Game of Thrones	George R. R. Martin	4	2006	Sastra
+35555	Programming with Java	Scrooge McDuck	48	1981	Programming
