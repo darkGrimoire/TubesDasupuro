@@ -1,5 +1,5 @@
-Username,ID_Buku_Hilang,Tanggal_Laporan
-Emma,26150,01/01/2019
-Liam,5458,02/01/2019
-Noah,33677,03/01/2019
-Oneechan,17059,03/01/2019
+ID_Buku_Hilang,Judul_Buku,Tanggal_Laporan
+26150,Black Butler,01/01/2019
+5458,Chemistry,02/01/2019
+33677,Master C Language in No Time,03/01/2019
+17059,Sherlock Holmes,03/01/2019
