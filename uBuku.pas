@@ -14,6 +14,7 @@ const
 function isKategoriValid(Text: string) : boolean;
 function isValidTahun(i: integer; optr: string; j: integer): boolean;
 function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
+function isJudulExist(TCSV: TCSVArr; Text: string) : boolean;
 
 { Modul Utama }
 procedure cariBukuKategori(TBuku: TCSVArr);
@@ -52,6 +53,14 @@ begin
       searchCellContain:=i;
     Inc(i);
   end;
+end;
+
+function isJudulExist(TCSV: TCSVArr; Text: string) : boolean;
+begin
+  if searchCellContain(TCSV,_judulBuku,Text)=-1 then
+    isJudulExist:=false
+  else
+    isJudulExist:=true;
 end;
 
 
@@ -200,6 +209,12 @@ procedure tambahJumlahBuku(var TBuku: TCSVArr);
     Clrscr();
 		writeln('Masukkan judul buku: ');
 		readln(input);
+		while not(isJudulExist(TBuku,input)) do
+		begin
+		writeln('Buku tidak ditemukan.');
+		write('Masukkan judul buku: ');
+		readln(input);
+		end;
 		rowbuku := searchCellContain(TBuku, _judulBuku, input);
 		
 		write('Masukkan jumlah tambahan buku: ');
