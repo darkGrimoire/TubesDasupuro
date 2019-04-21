@@ -22,6 +22,9 @@ while true do
     if role<>'' then logged:=true;
   end;
     Clrscr();
+    // sortCSV(TBuku,1);
+    // TWrite(TBuku);
+    // readkey;
     writeln('-----MENU [WIP]----- [ROLE: ',role,']');
     writeln('[1] Registrasi Akun ');
     // writeln('[2] Login Akun');

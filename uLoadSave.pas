@@ -17,7 +17,7 @@ procedure Load();
 begin
 	clrscr();
 	TextMode(C40);
-	Window(1,1,80,25);
+	// Window(1,1,80,25);
 	GotoXY(1,9);
 	writeln('                                                      ___________');
 	writeln('____________________________________________________/ Loading... |_');

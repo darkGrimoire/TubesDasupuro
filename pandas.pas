@@ -105,11 +105,11 @@ var
   unsorted: boolean;
 begin
   SetLength(tempRow.Arr,TCSV.Col);
-  pass:=1; unsorted:= true;
+  pass:=0; unsorted:= true;
   while (pass<=TCSV.Row-1) and unsorted do
   begin
     unsorted:=false;
-    for i:=TCSV.Row-1 downto pass+1 do
+    for i:=TCSV.Row-1 downto pass+2 do
       if compareString(TCSV.Arr[i][col],TCSV.Arr[i-1][col])=-1 then
       begin
         tempRow.Arr := TCSV.Arr[i];

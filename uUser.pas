@@ -137,7 +137,7 @@ begin
   // readCSV('user.csv',TUser);
   SetLength(aRow.Arr,TUser.Col);
   // hashPassword(TUser);
-  // Clrscr();
+  Clrscr();
   writeln('Kosongkan input untuk UNDO'); writeln;
   //TWrite(TUser);
   i:=0;

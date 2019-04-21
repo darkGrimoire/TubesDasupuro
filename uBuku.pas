@@ -64,7 +64,12 @@ var
 
 begin
   // readCSV('Buku.csv',TBuku);
+  SetLength(TBuku.Arr,TBuku.Row,TBuku.Col);
+  // TWrite(TBuku);
+  // readkey;
   sortCSV(TBuku,_judulBuku);
+  // TWrite(TBuku);
+  // readkey;
   Clrscr();
   write('Masukkan kategori: ');
   readln(input);
@@ -75,7 +80,7 @@ begin
       readln(input);
     end;
   writeln('');
-  i:=0;
+  i:=1;
   while i < TBuku.Row do
   begin
     if (input <> TBuku.Arr[i][_kategori]) then
@@ -84,7 +89,7 @@ begin
       inc(i);
   end;
   writeln('Hasil pencarian:');
-  if TBuku.Row=0 then
+  if TBuku.Row=1 then
   begin
     writeln('Tidak ada buku dalam kategori ini.');
   end else
@@ -96,6 +101,7 @@ begin
       write(TBuku.Arr[i][_author]); writeln('');
     end;
   end;
+  TWrite(TBuku);
   readkey;
   // TDestroy(TBuku);
 end;
@@ -107,6 +113,7 @@ var
 
 begin
   // readCSV('Buku.csv',TBuku);
+  SetLength(TBuku.Arr,TBuku.Row,TBuku.Col);
   sortCSV(TBuku,_judulBuku);
   Clrscr();
   write('Masukkan tahun: ');
@@ -150,6 +157,7 @@ var
 
 
 begin
+  Clrscr();
 	SetLength(new.Arr,TBuku.Col);
 	writeln('Masukkan data buku: ');
 	for i := 0 to TBuku.Col-1 do 
@@ -189,6 +197,7 @@ procedure tambahJumlahBuku(var TBuku: TCSVArr);
 		new, rowbuku, vJumlah: integer;
 
 	begin
+    Clrscr();
 		writeln('Masukkan judul buku: ');
 		readln(input);
 		rowbuku := searchCellContain(TBuku, _judulBuku, input);

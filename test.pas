@@ -1,13 +1,16 @@
 Program test;
 
-uses uUser;
-var a: string;
+uses pandas, uUser,crt;
+var 
+  a: string;
+  TUser: TCSVArr;
 
 begin
-while true do
-begin
-  readln(a);
-  writeln(Crypt(a));
-  writeln(Decrypt(a));
-end;
+
+readCSV('Buku.csv',TUser);
+TWrite(TUser);
+readkey;
+sortCSV(TUser,1);
+TWrite(TUser);
+readkey;
 end.
