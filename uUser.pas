@@ -19,8 +19,8 @@ procedure readMasked(var line: string);
 function isUsernameExist(TCSV: TCSVArr; Text: string) : boolean;
 
 { Modul Utama }
-procedure register();
-procedure login(var Role : string);
+procedure register(var TUser: TCSVArr);
+procedure login(var Role : string; var TUser: TCSVArr);
 
 implementation
 
@@ -127,18 +127,17 @@ begin
   isKategoriValid := (Text='Sastra') or (Text='Sains') or (Text='Manga') or (Text='Sejarah') or (Text='Programming');
 end;
 
-procedure register();
+procedure register(var TUser: TCSVArr);
 var
-  TUser: TCSVArr;
   aRow: TRow;
   i: integer;
   input,input2: string;
 
 begin
-  readCSV('user.csv',TUser);
+  // readCSV('user.csv',TUser);
   SetLength(aRow.Arr,TUser.Col);
   // hashPassword(TUser);
-  Clrscr();
+  // Clrscr();
   writeln('Kosongkan input untuk UNDO'); writeln;
   //TWrite(TUser);
   i:=0;
@@ -211,21 +210,20 @@ begin
     inc(i);
   end;
   addRow(TUser,aRow);
-  writeCSV('user.csv',TUser);
-  TDestroy(TUser);
+  // writeCSV('user.csv',TUser);
+  // TDestroy(TUser);
 end;
 
-procedure login(var Role : string);
+procedure login(var Role : string; var TUser: TCSVArr);
 var
-  TUser: TCSVArr;
   username,password: string;
   ret: integer;
 begin
-  readCSV('user.csv',TUser);
-  Clrscr();
-  unhashPassword(TUser);
-  TWrite(TUser);
-  hashPassword(TUser);
+  // readCSV('user.csv',TUser);
+  // Clrscr();
+  // unhashPassword(TUser);
+  // TWrite(TUser);
+  // hashPassword(TUser);
   write('Masukkan username: ');
   readln(username);
   write('Masukkan password: ');
@@ -240,13 +238,13 @@ begin
     // writeln(TUser.Arr[ret][_password]);
     writeln('Username / password salah! Silakan coba lagi.');
     Role := '';
-    TDestroy(TUser);
+    // TDestroy(TUser);
   end else
   begin
     writeln('Selamat datang ', TUser.Arr[ret,_nama], '!');
     Role := TUser.Arr[ret,_role];
     writeln(Role);
-    TDestroy(TUser);
+    // TDestroy(TUser);
   end;
   readkey;
 end;

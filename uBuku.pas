@@ -16,9 +16,9 @@ function isValidTahun(i: integer; optr: string; j: integer): boolean;
 function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
 
 { Modul Utama }
-procedure cariBukuKategori();
-procedure cariBukuTahun();
-procedure tambahBuku(TBuku: TCSVArr);
+procedure cariBukuKategori(TBuku: TCSVArr);
+procedure cariBukuTahun(TBuku: TCSVArr);
+procedure tambahBuku(var TBuku: TCSVArr);
 procedure tambahJumlahBuku(var TBuku: TCSVArr);
 
 implementation
@@ -57,14 +57,13 @@ end;
 
 { Modul Utama }
 
-procedure cariBukuKategori();
+procedure cariBukuKategori(TBuku: TCSVArr);
 var
-  TBuku: TCSVArr;
   input: string;
   i: integer;
 
 begin
-  readCSV('Buku.csv',TBuku);
+  // readCSV('Buku.csv',TBuku);
   sortCSV(TBuku,_judulBuku);
   Clrscr();
   write('Masukkan kategori: ');
@@ -98,17 +97,16 @@ begin
     end;
   end;
   readkey;
-  TDestroy(TBuku);
+  // TDestroy(TBuku);
 end;
 
-procedure cariBukuTahun();
+procedure cariBukuTahun(TBuku: TCSVArr);
 var
-  TBuku: TCSVArr;
   inOpt: string;
   input,i,tahun: integer;
 
 begin
-  readCSV('Buku.csv',TBuku);
+  // readCSV('Buku.csv',TBuku);
   sortCSV(TBuku,_judulBuku);
   Clrscr();
   write('Masukkan tahun: ');
@@ -139,10 +137,10 @@ begin
     end;
   end;
   readkey;
-  TDestroy(TBuku);
+  // TDestroy(TBuku);
 end;
 
-procedure tambahBuku(TBuku: TCSVArr);
+procedure tambahBuku(var TBuku: TCSVArr);
 
 var
 	
@@ -180,7 +178,7 @@ begin
 	new.Arr[i] := input;
 	end;
 	addRow(TBuku,new);
-	writeCSV('Buku.csv', TBuku);
+	// writeCSV('Buku.csv', TBuku);
 	TWrite(TBuku);
 
 end;
@@ -193,15 +191,15 @@ procedure tambahJumlahBuku(var TBuku: TCSVArr);
 	begin
 		writeln('Masukkan judul buku: ');
 		readln(input);
-		rowbuku := searchCellContain(TBuku, 1, input);
+		rowbuku := searchCellContain(TBuku, _judulBuku, input);
 		
 		write('Masukkan jumlah tambahan buku: ');
 		readln(new);
-		val(TBuku.Arr[rowbuku][3], vJumlah);
+		val(TBuku.Arr[rowbuku][_sumBuku], vJumlah);
 		vJumlah := vJumlah + new;
 		str(vJumlah, sJumlah);
-		TBuku.Arr[rowbuku][3] := sJumlah;
-		writeCSV('Buku.csv', TBuku);
+		TBuku.Arr[rowbuku][_sumBuku] := sJumlah;
+		// writeCSV('Buku.csv', TBuku);
 		writeln('Jumlah buku berhasil diperbarui.');
 		
 
