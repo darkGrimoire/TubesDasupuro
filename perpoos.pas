@@ -86,6 +86,10 @@ while true do
             Save();
             logged:=false;
             Load();
+          end else
+          begin
+            logged:=false;
+            Load();
           end;
           end;
     end;
@@ -127,6 +131,10 @@ while true do
           if yn='y' then
           begin
             Save();
+            logged:=false;
+            Load();
+          end else
+          begin
             logged:=false;
             Load();
           end;
