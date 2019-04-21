@@ -1,5 +1,5 @@
 ID_Buku,Judul_Buku,Author,Jumlah_Buku,Tahun_Penerbit,Kategori
-2347,Allegiant,Tifany,7,2015,Sains
+2347,Allegiant,Tifany,5,2015,Sains
 19110,Anatomy of Mammals,Nikolai Magnusson,4,1951,Sains
 43798,Anna Karenina,Leo Tolstoy,36,1982,Sastra
 26150,Black Butler Vol. 11,Yana Toboso,42,2009,Manga
@@ -38,3 +38,4 @@ ID_Buku,Judul_Buku,Author,Jumlah_Buku,Tahun_Penerbit,Kategori
 27546,Slam Dunk Vol.2,Takehiko Inoue,15,1990,Manga
 36589,The History of Computation,Eva Brighi,40,1965,Programming
 42377,Wuthering Heights,Emily Bronte,9,2018,Sastra
+99999,bit.ly/DasupuroFawwis,Faris-kun,100,2019,Programming
