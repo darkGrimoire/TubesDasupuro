@@ -1,8 +1,10 @@
-Program uLaporHilang;
+unit uLaporHilang;
 
+interface
 uses pandas, crt;
+procedure laporHilang();
 
-
+implementation
 procedure laporHilang();
 var
 
@@ -32,11 +34,7 @@ begin
 	new.Arr[i] := input;
 	end;
 	addRow(THilang,new);
-	// writeCSV('Laporan_Buku_Hilang.csv', THilang);
+	//writeCSV('Laporan_Buku_Hilang.csv', THilang);
 	TWrite(THilang);
 
 end;
-
-begin
-	laporHilang();
-end.
