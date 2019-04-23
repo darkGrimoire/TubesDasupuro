@@ -1,63 +1,22 @@
 unit uKembali;
 
 interface
-uses pandas,crt;
-
-{ Subprogram Pembantu }
-//Cek jika tanggal pengembalian telat
-function isTelat(d1, m1, y1, d2, m2, y2 : integer) : boolean;
-//ngubah string tanggal jadi integer
-function nilai(date: char): integer; 
+uses pandas,crt,uTanggal;
 
 { Modul Utama }
-Procedure kembalikan_buku(var TKembali, TPinjam: TCSVArr);
+Procedure kembalikan_buku(var TKembali: TCSVArr; var TPinjam: TCSVArr; var TBuku: TCSVArr);
 
 implementation
-function isTelat(d1, m1, y1, d2, m2, y2 : integer) : boolean;
-{ true jika telat }
-{ 1 = dikembalikan, 2 = harusnya balik kapan }
-{ ALGORITMA }
-begin
-	if y1=y2 then
-	begin
-		if m1=m2 then
-		begin
-			if d1<=d2 then
-			begin
-				isTelat:= False;
-			end else if d1>d2 then
-			begin
-				isTelat:= True;
-			end;
-		end else if m1<m2 then
-		begin
-			isTelat:= False;
-		end else if m1>m2 then
-		begin
-			isTelat:= True;
-		end;
-	end else if y1<y2 then
-	begin
-		isTelat:= False;
-	end else if y1>y2 then
-	begin
-		isTelat:= True;
-	end;
-end;
 
-
-function nilai(date: char): integer; //ngubah string tanggal jadi integer
-begin
-	nilai:= ord(date)-48;
-end;
-
-
-Procedure kembalikan_buku(var TKembali, TPinjam: TCSVArr);
+Procedure kembalikan_buku(var TKembali: TCSVArr; var TPinjam: TCSVArr; var TBuku: TCSVArr);
 var
 	// i: integer;
-	ID_Kembali, user, Judul_Kembali: string;
-	Tanggal_Peminjaman, Tanggal_Batas, tanggaltoday: string;
-	a,b,c,d,e,f: integer;
+	ID_Kembali, user: string;
+	Tanggal_Batas, tanggaltoday: string;
+	TAmbil,TBatas: TTanggal;
+	i,idxB,idxP,tempint,denda: integer;
+	found: boolean = false;
+	tempstr: string;
 	new: TRow;
 
 begin
@@ -72,51 +31,74 @@ begin
 	writeln('Data peminjaman:');
 	write('Username: ');
 	readln(user);
-	write('Judul buku: ');
-	readln(Judul_Kembali);
-	write('Tanggal peminjaman: ');
-	readln(Tanggal_Peminjaman);
-	write('Tanggal batas peminjaman: ');
-	readln(Tanggal_Batas);
-	writeln(' ');
-	write('Masukkan tanggal hari ini: ');
-	readln(tanggaltoday);
-	
-	{ MASUKIN KE FILE }
-	SetLength(new.Arr,3);
-	new.Arr[0] := user;
-	new.Arr[1] := ID_Kembali;
-	new.Arr[2] := tanggaltoday;
-	addRow(TKembali,new);
-	// writeCSV('file_history_pengembalian.csv', TKembali);
-
-	{ CONV TANGGAL }
-	a := 10*nilai(tanggaltoday[1]) + nilai(tanggaltoday[2]);
-	b := 10*nilai(tanggaltoday[4]) + nilai(tanggaltoday[5]);
-	c := 1000*nilai(tanggaltoday[7]) + 100*nilai(tanggaltoday[8]) + 10*nilai(tanggaltoday[9]) + nilai(tanggaltoday[10]);
-	d := 10*nilai(Tanggal_Batas[1]) + nilai(Tanggal_Batas[2]);
-	e := 10*nilai(Tanggal_Batas[4]) + nilai(Tanggal_Batas[5]);
-	f := 1000*nilai(Tanggal_Batas[7]) + 100*nilai(Tanggal_Batas[8]) + 10*nilai(Tanggal_Batas[9]) + nilai(Tanggal_Batas[10]);
-	
-	{ CEK TANGGAL }
-	if isTelat(a, b, c, d, e, f) then
+	i:=0;
+	while (i<TPinjam.Row) and (not found) do
 	begin
-		writeln('Anda terlambat mengembalikan buku.');
+		if (TPinjam.Arr[i][_idPinjam]=ID_kembali) and (TPinjam.Arr[i][_status]='belum') and (TPinjam.Arr[i][_user]=user) then
+		begin
+			idxP:=i;
+			found:=true;
+		end else
+		begin
+			inc(i);
+		end;
+	end;
+	if (not found) then
+	begin
+		writeln('ID/username peminjaman tak dapat ditemukan!');
+		readkey;
 	end else
 	begin
-		writeln('Terima kasih sudah meminjam.');
+		idxB:=searchCellContain(TBuku,_idBuku,ID_kembali);
+		writeln('Judul buku: ',TBuku.Arr[idxB][_judulBuku]);
+		writeln('Tanggal peminjaman: ', TPinjam.Arr[idxP][_tanggalPinjam]);
+		writeln('Tanggal batas peminjaman: ', TPinjam.Arr[idxP][_tanggalBatas]);
+		Tanggal_Batas:=TPinjam.Arr[idxP][_tanggalBatas];
+		writeln(' ');
+		write('Masukkan tanggal hari ini: ');
+		readln(tanggaltoday);
+		TAmbil:=readTanggal(tanggaltoday);
+		while (not isValidTanggal(TAmbil)) do
+		begin
+			writeln('Tanggal tidak valid! mohon ulangi:');
+			readln(tanggaltoday);
+			TAmbil:=readTanggal(tanggaltoday);
+		end;
+
+		{ CONV TANGGAL }
+		TBatas:=readTanggal(Tanggal_Batas);
+		
+		{ MASUKIN KE FILE }
+		SetLength(new.Arr,3);
+		new.Arr[0] := user;
+		new.Arr[1] := ID_Kembali;
+		new.Arr[2] := tanggaltoday;
+		addRow(TKembali,new);
+		// writeCSV('file_history_pengembalian.csv', TKembali);
+
+		{ PERBAIKI STATUS }
+		TPinjam.Arr[idxP][_status]:='sudah';
+
+		{ TAMBAHKAN BUKU YANG SUDAH DIKEMBALIKAN }
+		val(TBuku.Arr[idxB][_sumBuku],tempint);
+		inc(tempint);
+		str(tempint,tempstr);
+		TBuku.Arr[idxB][_sumBuku]:=tempstr;
+		{ CEK TANGGAL }
+		if isTelat(TAmbil,TBatas) then
+		begin
+			denda:=2000*selisihTanggal(TBatas,TAmbil);
+			writeln('Anda terlambat mengembalikan buku.');
+			writeln('Anda terkena denda Rp',denda);
+		end else
+		begin
+			writeln('Terima kasih sudah meminjam.');
+		end;
+		writeln; writeln('Tekan tombol apapun untuk melanjutkan');
+	  readkey;
+		// TDestroy(TKembali);
+		
 	end;
-	writeln; writeln('Tekan tombol apapun untuk melanjutkan');
-  readkey;
-	// TDestroy(TKembali);
-	
-	// { PERBAIKI STATUS }
-	// i:=1;
-	// while (i<TPinjam.Row) and (TPinjam.Arr[i][_idBuku] <> ID_dipinjam) and (TPinjam.Arr[i][_tanggalPinjam] <> Tanggal_Dipinjam) and (TPinjam.Arr[i][_user] <> username) do
-	// begin
-	// 	TPinjam[i][3] := 'sudah';
-	// 	inc(i);
-	// end;
 end;
 
 end.

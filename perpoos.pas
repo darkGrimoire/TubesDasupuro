@@ -122,7 +122,7 @@ while true do
       1 : cariBukuKategori(TBuku);
       2 : cariBukuTahun(TBuku);
       3 : pinjam_buku(loggedUser,TBuku,TPinjam);
-      4 : kembalikan_buku(TKembali, TPinjam);
+      4 : kembalikan_buku(TKembali, TPinjam,TBuku);
       5 : laporHilang(THilang);
       0 : begin
           writeln('Simpan file (Y/N) ? ');

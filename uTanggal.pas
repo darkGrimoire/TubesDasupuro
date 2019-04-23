@@ -103,17 +103,17 @@ Hari:=0;
 for i:=T1.Y to T2.Y do
 	Inc(Hari,364+isTahunKabisat(i));
 Inc(Hari,T2.Y-T1.Y);
-writeln('1: ',Hari);
+// writeln('1: ',Hari);
 //Selisih hari dari 1 Januari T1.Y hingga Tanggal ke T1.D di bulan T1.M
 for i:=1 to T1.M-1 do
 	Dec(Hari,maxH(i,T1.Y));
 Dec(Hari,T1.D-1);
-writeln('2: ',Hari);
+// writeln('2: ',Hari);
 //Selisih hari dari Tanggal T2.D di bulan T2.M hingga 31 Desember
 for i:=T2.M+1 to 12 do
 	Dec(Hari,maxH(i,T2.Y));
 Dec(Hari,maxH(T2.M,T2.Y)-T2.D);
-writeln('3: ',Hari);
+// writeln('3: ',Hari);
 selisihTanggal:=Hari;
 end;
 
