@@ -19,10 +19,12 @@ procedure cariBukuTahun(TBuku: TCSVArr);
 //Modul menambah jumlah buku yang ada di stock
 procedure tambahBuku(var TBuku: TCSVArr);
 //Modul menambah data buku dalam database
-procedure tambahJumlahBuku(var TBuku: TCSVArr);
-//Modul menampilkan perhitungan statistik database Buku
-procedure statistik(TUser, TBuku: TCSVArr);
 
+procedure statistik(TUser, TBuku: TCSVArr);								
+// prosedur ini digunakan oleh admin untuk melihat statistik yang berkaitan dengan pengguna
+	// dan buku. Statistik pegguna berisi daftar banyak anggota per kategori admin dan pengunjung.
+	// STatistik buku berisi jumlah total buku pada setiap kategori
+	
 implementation
 
 { Subprogram Pembantu }
@@ -252,42 +254,42 @@ var
   i : integer;
 
 begin
-  Clrscr;
+  Clrscr;																// membersihkan tampilan dari jendela sebelumnya
   jumlahAdmin := 0; jumlahNonAdmin := 0; jSastra := 0; jManga := 0; jProgramming := 0; jSains := 0; jSejarah := 0;
   // readCSV('User.csv', TUser);
   // TWrite(TUser);
   // readCSV('Buku.csv', TBuku);
   // TWrite(TBuku);
-  for i:=0 to TUser.row-1 do
-    if TUser.Arr[i][_role]='admin' then
-      jumlahAdmin := 1 + jumlahAdmin
-    else //pengunjung
-      jumlahNonAdmin := 1 + jumlahNonAdmin;
-  writeln ('Jumlah admin: ', jumlahAdmin );
-  writeln ('Jumlah pengunjung: ', jumlahNonAdmin);
-  writeln ('Total: ', jumlahAdmin + jumlahNonAdmin);
-  writeln('Tekan tombol apapun untuk melanjutkan');
+  for i:=0 to TUser.row-1 do											// pengulangan dari baris pertama hingga terakhir dari User.csv
+    if TUser.Arr[i][_role]='admin' then									// ketika ditemukan role dari seorang pengguna adalah 'admin'
+      jumlahAdmin := 1 + jumlahAdmin									// maka jumlah admin bertambah 1
+    else 																// ketika ditemukan role dari seorang pengguna bukan 'admin' melainkan 'pengunjung'
+      jumlahNonAdmin := 1 + jumlahNonAdmin;								// maka jumlah pengguna bertambah 1
+  writeln ('Jumlah admin: ', jumlahAdmin );								// program menuliskan jumlah admin
+  writeln ('Jumlah pengunjung: ', jumlahNonAdmin);						// program menuliskan jumlah pengunjung
+  writeln ('Total: ', jumlahAdmin + jumlahNonAdmin);					// program menuliskan jumlah admin dan pengunjung
+  writeln('Tekan tombol apapun untuk melanjutkan');						// prorgam akan menyuruh pengguna untuk menekan tombol apapun untuk melanjutkan program setelah ditampilkan statistika pengguna
   readkey;
-  for i:=0 to TBuku.row-1 do
+  for i:=0 to TBuku.row-1 do											// pengulangan dari baris pertama hingga terakhir dari Buku.csv
   begin
-    if TBuku.Arr[i][_kategori]='Sastra' then
-      jSastra := 1 + jSastra
-    else if TBuku.Arr[i][_kategori]='Manga' then
-      jManga := 1 + jManga
-    else if TBuku.Arr[i][_kategori]='Programming' then
-      jProgramming := 1 + jProgramming
-    else if TBuku.Arr[i][_kategori]='Sains' then
-      jSains := 1 + jSains
-    else if TBuku.Arr[i][_kategori]='Sejarah' then
-      jSejarah := 1 + jSejarah;
+    if TBuku.Arr[i][_kategori]='Sastra' then							// ketika kategori buku adalah sastra
+      jSastra := 1 + jSastra											// maka jumlah buku sastra bertambah 1
+    else if TBuku.Arr[i][_kategori]='Manga' then						// ketika kategori buku adalah manga
+      jManga := 1 + jManga												// maka jumlah buku manga bertambah 1
+    else if TBuku.Arr[i][_kategori]='Programming' then					// ketika kategori buku adalah programming
+      jProgramming := 1 + jProgramming									// maka jumlah buku programming bertambah 1
+    else if TBuku.Arr[i][_kategori]='Sains' then						// ketika kategori buku adalah sanis
+      jSains := 1 + jSains												// maka jumlah buku sains bertambah 1
+    else if TBuku.Arr[i][_kategori]='Sejarah' then						// ketika kategori buku adalah sejarah
+      jSejarah := 1 + jSejarah;											// maka jumlah buku sejarah bertambah 1
   end;
-  writeln ('Jumlah buku sastra : ', jSastra);
-  writeln ('Jumlah buku manga : ', jManga);
-  writeln ('Jumlah buku programming : ', jProgramming);
-  writeln ('Jumlah buku sains : ', jSains);
-  writeln ('Jumlah buku sejarah : ', jSejarah);
-  writeln ('Total: ', jSastra + jManga + jProgramming + jSains + jSejarah);
-  writeln; writeln('Tekan tombol apapun untuk melanjutkan');
+  writeln ('Jumlah buku sastra : ', jSastra);							// program menuliskan jumlah buku sastra
+  writeln ('Jumlah buku manga : ', jManga);								// program menuliskan jumlah buku manga
+  writeln ('Jumlah buku programming : ', jProgramming);					// prorgam menuliskan jumlah buku programming
+  writeln ('Jumlah buku sains : ', jSains);								// program menuliskan jumlah buku sains
+  writeln ('Jumlah buku sejarah : ', jSejarah);							// program menuliskan jumlah buku sejarah
+  writeln ('Total: ', jSastra + jManga + jProgramming + jSains + jSejarah);			// program menjumlahkan seluruh buku
+  writeln; writeln('Tekan tombol apapun untuk melanjutkan');			// program akan menyuruh pengguna untuk menekan tombol apapun untuk melanjutkan program
   readkey;
 end;
 
