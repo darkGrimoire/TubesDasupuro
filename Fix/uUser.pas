@@ -4,16 +4,25 @@ interface
 uses pandas, crt;
 
 { Subprogram Pembantu }
+//Fungsi Hash Password
 function Crypt(aText: string): string;
+//Fungsi decrypt Hash Password (for debug purpose)
 function Decrypt(aText: string): string;
+//prosedur hash semua password dalam satu TCSV (for debug purpose)
 procedure hashPassword(var TCSV: TCSVArr);
+//prosedur decrypt hash semua password dalam satu TCSV (for debug purpose)
 procedure unhashPassword(var TCSV: TCSVArr);
+//procedure read agar kelihatannya bintang2
 procedure readMasked(var line: string);
+//fungsi cek username sudah ada atau tidak
 function isUsernameExist(TCSV: TCSVArr; Text: string) : boolean;
 
 { Modul Utama }
+//Modul registrasi akun, hanya bisa dilakukan administrator
 procedure register(var TUser: TCSVArr);
+//Modul login tiap kali aplikasi jalan
 procedure login(var Role : string; var loggedUser: string; var TUser: TCSVArr);
+//Modul cari anggota (username) dan tampilkan datanya
 procedure cariAnggota(TUser: TCSVArr);
 
 implementation
@@ -27,10 +36,12 @@ begin
   len := Length(aText);
   SetLength(Crypt, len);
   j:=1;
+  //geser aText dengan PWD yang telah ditentukan per karakternya
   for i := 1 to len do
   begin
     Crypt[i] := Chr(Ord(aText[i]) + Ord(PWD[j]));
     Inc(j);
+    //Jika length aText melebihi length PWD, PWD akan di loop dari awal.
     if j>Length(PWD) then j:=1;
   end;
 end;
@@ -44,6 +55,7 @@ begin
   len := Length(aText);
   SetLength(Decrypt, len);
   j:=1;
+  //Geser kembali ke semula hash menjadi password biasa
   for i := 1 to len do
   begin
     Decrypt[i] := Chr(Ord(aText[i]) - Ord(PWD[j]));
@@ -76,8 +88,10 @@ var
 begin
 line:='';
 key:=readkey;
+//Selama tidak terketik enter
 while ord(key)<>13 do
 begin
+  //Jika terketik backspace, hapus karakter dan keluarkan dari buffer. Berhenti jika buffer sudah habis.
   if ord(key)=8 then
   begin
     write(key);
@@ -88,10 +102,12 @@ begin
       delete(line,Length(line),1);
     end;
   end else
+  //Aktifkan flag special char (ESC, ARROW, F1-F12, DSB) 
   if ord(key)=0 then
   begin
     specialChar:=true;
   end else
+  //Karakter yang terbaca keyboard masukkan ke buffer, kecuali flag special char sedang aktif
   if (ord(key)>31) and (ord(key)<126) then
   begin
     if not specialChar then
@@ -128,12 +144,12 @@ var
   input,input2: string;
 
 begin
-  // readCSV('user.csv',TUser);
+  //set panjang array aRow
   SetLength(aRow.Arr,TUser.Col);
-  // hashPassword(TUser);
+  //ClearScreen
   Clrscr();
+  //input
   writeln('Kosongkan input untuk UNDO'); writeln;
-  //TWrite(TUser);
   i:=0;
   while i<=TUser.Col-1 do
   begin
@@ -154,7 +170,7 @@ begin
           write('Masukkan role: ');  //write(wherex(), ' ', wherey());
           end;
     end;
-    //input
+    //input password
     if i=3 then
     begin
       readMasked(input);
@@ -204,8 +220,6 @@ begin
     inc(i);
   end;
   addRow(TUser,aRow);
-  // writeCSV('user.csv',TUser);
-  // TDestroy(TUser);
 end;
 
 procedure login(var Role : string; var loggedUser: string; var TUser: TCSVArr);
@@ -213,34 +227,21 @@ var
   username,password: string;
   ret: integer;
 begin
-  // readCSV('user.csv',TUser);
-  // Clrscr();
-  // unhashPassword(TUser);
-  // TWrite(TUser);
-  // hashPassword(TUser);
   write('Masukkan username: ');
   readln(username);
   write('Masukkan password: ');
   readMasked(password); writeln;
-  // password:=Crypt(password);
   ret := searchCellContain(TUser,_username,username);
-  //writeln(ret,' ',password, ' ', d.cells[3,ret]);
   if (ret=-1) or (password <> Decrypt(TUser.Arr[ret][_password])) then
   begin
-    // writeln(ret);
-    // writeln(password);
-    // writeln(TUser.Arr[ret][_password]);
     writeln('Username / password salah! Silakan coba lagi.');
     Role := '';
     loggedUser := '';
-    // TDestroy(TUser);
   end else
   begin
     writeln('Selamat datang ', TUser.Arr[ret,_nama], '!');
     Role := TUser.Arr[ret,_role];
     loggedUser := TUser.Arr[ret,_username];
-    // writeln(Role);
-    // TDestroy(TUser);
   end;
   writeln; writeln('Tekan tombol apapun untuk melanjutkan');
   readkey;
