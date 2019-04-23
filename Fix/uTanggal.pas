@@ -3,9 +3,9 @@ unit uTanggal;
 interface
 type 
 	TTanggal = record
-								D: integer;
-								M: integer;
-								Y: integer;
+								D: integer; //Day
+								M: integer; //Month
+								Y: integer; //Year
 							end;
 
 //cari tahu apa T1<T2
@@ -59,13 +59,15 @@ begin
 	end;
 end;
 
-function nilai(date: char): integer; //ngubah string tanggal jadi integer
+function nilai(date: char): integer;
 begin
+	//ngubah string tanggal jadi integer
 	nilai:= ord(date)-48;
 end;
 
 function readTanggal(aText: string): TTanggal;
 begin
+	//Ubah string jadi tanggal dalam bentuk DD/MM/YYYY
 	readTanggal.D := 10*nilai(aText[1]) + nilai(aText[2]);
 	readTanggal.M := 10*nilai(aText[4]) + nilai(aText[5]);
 	readTanggal.Y := 1000*nilai(aText[7]) + 100*nilai(aText[8]) + 10*nilai(aText[9]) + nilai(aText[10]);
@@ -81,6 +83,7 @@ end;
 
 function maxH(M,Y: integer): integer;
 begin
+	//Cek max hari per bulan
 	case M of
     1,3,5,7,8,10,12: maxH := 31;
     4,6,9,11       : maxH := 30;
@@ -122,11 +125,14 @@ var
 	T2: TTanggal;
 begin
 T2:=T1;
+//tambahkan hari pada T2.D
 Inc(T2.D,Hari);
+//Jika harinya kelebihan, kurangi T2.D sesuai dgn max hari pada bulan tersebut dan tambahkan T2.M
 while T2.D>maxH(T2.M,T2.Y) do
 begin
 	Dec(T2.D, maxH(T2.M,T2.Y));
 	Inc(T2.M);
+	//Jika bulannya kelebihan, kurangi T2.M dan tambahkan T2.Y
 	while T2.M>12 do
 	begin
 		Dec(T2.M, 12);
