@@ -14,7 +14,8 @@ var
 	ID_Kembali, user: string;
 	Tanggal_Batas, tanggaltoday: string;
 	TAmbil,TBatas: TTanggal;
-	i,idxB,idxP,tempint,denda: integer;
+	i,idxB,idxP,tempint: integer;
+	denda: longint;
 	found: boolean = false;
 	tempstr: string;
 	new: TRow;

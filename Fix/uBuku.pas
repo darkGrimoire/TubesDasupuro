@@ -16,9 +16,10 @@ function isJudulExist(TCSV: TCSVArr; Text: string) : boolean;
 procedure cariBukuKategori(TBuku: TCSVArr);
 //Modul mencari buku berdasarkan tahun terbitnya
 procedure cariBukuTahun(TBuku: TCSVArr);
-//Modul menambah jumlah buku yang ada di stock
-procedure tambahBuku(var TBuku: TCSVArr);
 //Modul menambah data buku dalam database
+procedure tambahBuku(var TBuku: TCSVArr);
+//Modul menambah jumlah buku yang ada di stock
+procedure tambahJumlahBuku(var TBuku: TCSVArr);
 
 procedure statistik(TUser, TBuku: TCSVArr);								
 // prosedur ini digunakan oleh admin untuk melihat statistik yang berkaitan dengan pengguna
