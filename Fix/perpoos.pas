@@ -10,11 +10,13 @@ var
   yn: string;
 
 begin
+//Load File
 Load();
 while true do
   begin
   while not logged do
   begin
+    //UI/UX untuk menu Login
     Clrscr;
     GotoXY(1,1);
     writeln('+--------------------------------+                                 ');
@@ -36,8 +38,12 @@ while true do
     writeln('__________________________________________________________________|');
     GotoXY(1,5);
     login(role,loggedUser, TUser);
+    //Hanya akan lanjut jika pengunjung berhasil login
     if role<>'' then logged:=true;
   end;
+  //****************************************************************************//
+  //                            MENU ADMINISTRATOR                              //
+  //****************************************************************************//
   if role='admin' then
   begin
     Clrscr();
@@ -67,6 +73,7 @@ while true do
     GotoXY(1,15);
     write('Pilihan: ');
     readln(choice);
+    //Baca pilihan user. Jika tidak ada menu akan di looping.
     case choice of
       1 : register(TUser);
       2 : cariBukuKategori(TBuku);
@@ -78,6 +85,7 @@ while true do
       8 : Statistik(TUser,TBuku);
       9 : cariAnggota(TUser);
       0 : begin
+          //Prosedur Exit
           writeln('Simpan file (Y/N) ? ');
           readln(yn);
           Lowercase(yn);
@@ -94,6 +102,9 @@ while true do
           end;
     end;
   end else //role='user'
+  //****************************************************************************//
+  //                                 MENU USER                                  //
+  //****************************************************************************//
   begin
     Clrscr();
     writeln('*******************************************************************');
@@ -118,6 +129,7 @@ while true do
     GotoXY(1,12);
     write('Pilihan: ');
     readln(choice);
+    //Baca pilihan user. Jika tidak ada menu akan di looping.
     case choice of
       1 : cariBukuKategori(TBuku);
       2 : cariBukuTahun(TBuku);
@@ -125,6 +137,7 @@ while true do
       4 : kembalikan_buku(TKembali, TPinjam,TBuku);
       5 : laporHilang(THilang);
       0 : begin
+          //Prosedur Exit
           writeln('Simpan file (Y/N) ? ');
           readln(yn);
           Lowercase(yn);
