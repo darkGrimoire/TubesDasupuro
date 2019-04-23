@@ -3,7 +3,10 @@ unit uHilang;
 interface
 uses pandas, crt;
 
+{ Modul Utama }
+//Modul melihat isi dari Laporan Hilang
 procedure lihatLaporHilang(THilang, TBuku: TCSVArr);
+//Modul melaporkan buku Hilang dan masukkan ke dalam databasenya
 procedure laporHilang(var THilang: TCSVArr);
 
 implementation
@@ -11,18 +14,13 @@ implementation
 procedure lihatLaporHilang(THilang, TBuku: TCSVArr);
 var
 	j : integer;
-	// THilang: TCSVArr;
-	// TBuku : TCSVArr;
 	i : integer;
 
 begin
+//ClearScreen
 ClrScr;
-writeln('Buku yang hilang : ');
-// readCSV('Laporan_Buku_Hilang.csv', THilang);
-// //TWrite(THilang);
-// readCSV('Buku.csv', TBuku);
-//TWrite(TBuku);
-	
+//Baca isi laporan buku yang hilang, ambil judulnya dari TBuku (jika idnya ada)
+writeln('Buku yang hilang : ');	
 for i:=0 to THilang.row-1 do
 	for j:=0 to TBuku.row-1 do
 		if THilang.Arr[i][_idHilang] = TBuku.Arr[j][_idBuku] then
@@ -40,12 +38,13 @@ var
 	new: TRow;
 	input: string;
 	i: integer;
-	// THilang: TCSVArr;
 
 begin
-	// readCSV('Laporan_Buku_Hilang.csv', THilang);
+	//ClearScreen
 	ClrScr;
+	//set panjang baris
 	SetLength(new.Arr,THilang.Col);
+	//input
 	writeln('Masukkan data buku: ');
 	for i := 0 to THilang.Col-1 do 
 	begin
@@ -61,10 +60,11 @@ begin
 			end;
 		end;
 	readln(input);
+	//masukkan input ke baris
 	new.Arr[i] := input;
 	end;
+	//tambahkan baris ke THilang
 	addRow(THilang,new);
-	//writeCSV('Laporan_Buku_Hilang.csv', THilang);
 	writeln; writeln('Tekan tombol apapun untuk melanjutkan');
   readkey;
 end;
