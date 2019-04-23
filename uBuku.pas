@@ -194,7 +194,6 @@ begin
 	// writeCSV('Buku.csv', TBuku);
 	// TWrite(TBuku);
 	writeln('Buku berhasil ditambahkan.');
-	
 end;
 
 procedure tambahJumlahBuku(var TBuku: TCSVArr);
