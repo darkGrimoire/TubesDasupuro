@@ -9,6 +9,7 @@ var
 	TKembali : TCSVArr;
 	THilang : TCSVArr;
 
+{ Modul Utama }
 //Load semua file
 procedure Load();
 //Save semua file
@@ -17,6 +18,7 @@ procedure Save();
 implementation
 procedure Load();
 begin
+	//UI/UX Animasi loading dan logo perpoos
 	clrscr();
 	GotoXY(1,1);
 	writeln('  ____                                                 ');
@@ -62,6 +64,7 @@ begin
 	GotoXY(1,14);
 	writeln('0|##################___|90%');
 	Delay(1500);
+	//Load semua csv secara otomatis
 	readCSV('Buku.csv', TBuku);
 	readCSV('User.csv', TUser);
 	readCSV('file_history_peminjaman.csv', TPinjam);
@@ -76,11 +79,13 @@ end;
 
 procedure Save();
 begin
+	//Save semua TCSV ke filenya masing2
 	writeCSV('Buku.csv', TBuku);
 	writeCSV('User.csv', TUser);
 	writeCSV('file_history_peminjaman.csv', TPinjam);
 	writeCSV('file_history_pengembalian.csv', TKembali);
 	writeCSV('Laporan_Buku_Hilang.csv', THilang);
+	//Hapus semua array TCSV
 	TDestroy(TBuku);
 	TDestroy(TUser);
 	TDestroy(TPinjam);
