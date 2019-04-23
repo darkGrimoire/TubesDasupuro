@@ -4,16 +4,23 @@ interface
 uses pandas, crt;
 
 { Subprogram Pembantu }
+//Cek Kategori buku yang dimasukkan valid tidaknya
 function isKategoriValid(Text: string) : boolean;
+//Cek operator tahun yang dimasukkan valid tidaknya
 function isValidTahun(i: integer; optr: string; j: integer): boolean;
-function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
+//cek judulnya ada atau tidak
 function isJudulExist(TCSV: TCSVArr; Text: string) : boolean;
 
 { Modul Utama }
+//Modul mencari buku berdasarkan kategorinya
 procedure cariBukuKategori(TBuku: TCSVArr);
+//Modul mencari buku berdasarkan tahun terbitnya
 procedure cariBukuTahun(TBuku: TCSVArr);
+//Modul menambah jumlah buku yang ada di stock
 procedure tambahBuku(var TBuku: TCSVArr);
+//Modul menambah data buku dalam database
 procedure tambahJumlahBuku(var TBuku: TCSVArr);
+//Modul menampilkan perhitungan statistik database Buku
 procedure statistik(TUser, TBuku: TCSVArr);
 
 implementation
@@ -21,11 +28,13 @@ implementation
 { Subprogram Pembantu }
 function isKategoriValid(Text: string) : boolean;
 begin
+  //Validasi
   isKategoriValid := (Text='Sastra') or (Text='Sains') or (Text='Manga') or (Text='Sejarah') or (Text='Programming');
 end;
 
 function isValidTahun(i: integer; optr: string; j: integer): boolean;
 begin
+  //Validasi sesuai operator yang digunakan
   case optr of
     '=' : isValidTahun:= i=j;
     '<' : isValidTahun:= i<j;
@@ -35,22 +44,9 @@ begin
   end;
 end;
 
-function searchCellContain(TCSV: TCSVArr; Where: integer; Text: string) : integer;
-var
-  i: integer;
-begin
-  i:=0;
-  searchCellContain:=-1;
-  while (i<=TCSV.Row-1) and (searchCellContain=-1) do
-  begin
-    if Text=TCSV.Arr[i][Where] then
-      searchCellContain:=i;
-    Inc(i);
-  end;
-end;
-
 function isJudulExist(TCSV: TCSVArr; Text: string) : boolean;
 begin
+  //Cek ada tidaknya cell yang mengandung judul buku (Text) tersebut
   if searchCellContain(TCSV,_judulBuku,Text)=-1 then
     isJudulExist:=false
   else
@@ -66,16 +62,17 @@ var
   i: integer;
 
 begin
-  // readCSV('Buku.csv',TBuku);
+  //Sesuaikan length array
   SetLength(TBuku.Arr,TBuku.Row,TBuku.Col);
-  // TWrite(TBuku);
-  // readkey;
+  //Sortir array berdasakan judul buku
   sortCSV(TBuku,_judulBuku);
-  // TWrite(TBuku);
-  // readkey;
+  //ClearScreen
   Clrscr();
+  //Input
+  writeln('Pilihan kategori: [Manga] [Programming] [Sains] [Sastra] [Sejarah]');
   write('Masukkan kategori: ');
   readln(input);
+  //Validasi input
   while not isKategoriValid(input) do
     begin
       writeln('Kategori ', input, ' tidak valid.');
@@ -84,6 +81,7 @@ begin
     end;
   writeln('');
   i:=1;
+  //Buang Buku yang kategorinya tidak sesuai dari TBuku.Arr
   while i < TBuku.Row do
   begin
     if (input <> TBuku.Arr[i][_kategori]) then
@@ -92,10 +90,12 @@ begin
       inc(i);
   end;
   writeln('Hasil pencarian:');
+  //Jika semua buku terbuang kecuali headernya
   if TBuku.Row=1 then
   begin
     writeln('Tidak ada buku dalam kategori ini.');
   end else
+  //Buku yang sesuai kategori ada, lalu di print.
   begin
     for i:=0 to TBuku.Row-1 do
     begin
@@ -104,10 +104,8 @@ begin
       write(TBuku.Arr[i][_author]); writeln('');
     end;
   end;
-  // TWrite(TBuku);
   writeln; writeln('Tekan tombol apapun untuk melanjutkan');
   readkey;
-  // TDestroy(TBuku);
 end;
 
 procedure cariBukuTahun(TBuku: TCSVArr);
@@ -116,16 +114,20 @@ var
   input,i,tahun: integer;
 
 begin
-  // readCSV('Buku.csv',TBuku);
+  //Sesuaikan panjang array
   SetLength(TBuku.Arr,TBuku.Row,TBuku.Col);
+  //Sortir array berdasakan judul buku
   sortCSV(TBuku,_judulBuku);
+  //ClearScreen
   Clrscr();
+  //Input
   write('Masukkan tahun: ');
   readln(input);
-  write('Masukkan kategori: ');
+  write('Masukkan kategori (=,>,<,>=,<=): ');
   readln(inOpt);
   writeln;
   i:=1;
+  //Buang buku yang tidak sesuai tahun terbitnya
   while i < TBuku.Row do
   begin
     Val(TBuku.Arr[i][_tahun],tahun);
@@ -135,10 +137,12 @@ begin
       inc(i);
   end;
   writeln('Hasil pencarian:');
+  //Jika semua buku terbuang kecuali headernya
   if TBuku.Row=1 then
   begin
     writeln('Tidak ada buku dalam kategori ini.');
   end else
+  //Buku yang sesuai kategori ada, lalu di print.
   begin
     for i:=0 to TBuku.Row-1 do
     begin
@@ -149,7 +153,6 @@ begin
   end;
   writeln; writeln('Tekan tombol apapun untuk melanjutkan');
   readkey;
-  // TDestroy(TBuku);
 end;
 
 procedure tambahBuku(var TBuku: TCSVArr);
@@ -162,8 +165,11 @@ var
 
 
 begin
+  //ClearScreen
   Clrscr();
+  //Set cell dalam baris new.Arr
 	SetLength(new.Arr,TBuku.Col);
+  //input
 	writeln('Masukkan data buku: ');
 	for i := 0 to TBuku.Col-1 do 
 	begin
@@ -188,11 +194,11 @@ begin
 			end;
 		end;
 	readln(input);
+  //Masukkan ke baris new.Arr
 	new.Arr[i] := input;
 	end;
+  //tambahkan baris ke TBuku
 	addRow(TBuku,new);
-	// writeCSV('Buku.csv', TBuku);
-	// TWrite(TBuku);
 	writeln('Buku berhasil ditambahkan.');
 end;
 
@@ -202,22 +208,29 @@ procedure tambahJumlahBuku(var TBuku: TCSVArr);
 		new, rowbuku, vJumlah: integer;
 
 	begin
+    //ClearScreen
     Clrscr();
+    //Input
 		writeln('Masukkan judul buku: ');
 		readln(input);
+    //Validasi judul
 		while not(isJudulExist(TBuku,input)) do
 		begin
 		writeln('Buku tidak ditemukan.');
 		write('Masukkan judul buku: ');
 		readln(input);
 		end;
+    //cari index row input di TBuku
 		rowbuku := searchCellContain(TBuku, _judulBuku, input);
-		
+		//set tambahan bukunya
 		write('Masukkan jumlah tambahan buku: ');
 		readln(new);
+    //ubah string menjadi integer
 		val(TBuku.Arr[rowbuku][_sumBuku], vJumlah);
 		vJumlah := vJumlah + new;
+    //ubah integer balik ke string
 		str(vJumlah, sJumlah);
+    //set cell tersebut jadi jumlah yang sudah ditambahkan
 		TBuku.Arr[rowbuku][_sumBuku] := sJumlah;
 		// writeCSV('Buku.csv', TBuku);
 		writeln('Jumlah buku berhasil diperbarui.');
