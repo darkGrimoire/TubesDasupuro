@@ -3,14 +3,16 @@ unit uPinjam;
 interface
 uses pandas,crt,uTanggal;
 
+// Modul untuk proses peminjaman buku
 procedure pinjam_buku(username: string; TBuku: TCSVArr; var TPinjam: TCSVArr);
+// Modul untuk menampilka riwayat peminjaman buku
 procedure riwayat(TBuku, TPinjam: TCSVArr);
 
 implementation
+
 procedure pinjam_buku(username: string; TBuku: TCSVArr; var TPinjam: TCSVArr);
 var
 	i, tempint: integer;
-	//ID_dipinjam: integer;
 	ID_dipinjam, tanggal_dipinjam,tanggal_batas,tempstr,tempstr2,tempstr3: string;
 	new: TRow;
 	status: string;
@@ -22,24 +24,30 @@ begin
 	// TWrite(TPinjam);
 	// readCSV('Buku.csv', TBuku);
 	// TWrite(TBuku);
+	// ClearScreen
 	Clrscr;
+	// Input id buku
 	write('Masukkan id buku yang ingin dipinjam: ');
 	readln(ID_dipinjam);
+	// Validasi ID Buku
 	if searchCellContain(TBuku,_idBuku,ID_dipinjam)=-1 then
 	begin
 		writeln('ID Buku Tidak dapat ditemukan!');
 		readkey;
 	end else
 	begin
+		// Input tanggal peminjaman
 		write('Masukkan tanggal hari ini: ');
 		readln(tanggal_dipinjam);
 		T1:=readTanggal(tanggal_dipinjam);
+		// Validasi tanggal
 		while (not isValidTanggal(T1)) do
 		begin
 			writeln('Tanggal tidak valid! mohon ulangi:');
 			readln(tanggal_dipinjam);
 			T1:=readTanggal(tanggal_dipinjam);
 		end;
+		// Menentukan tanggal batas peminjaman (h+7)
 		T1:=tambahTanggal(T1,7);
 		str(T1.D,tempstr);
 		str(T1.M,tempstr2);
@@ -51,6 +59,7 @@ begin
 		tanggal_batas:=tempstr+'/'+tempstr2+'/'+tempstr3;
 		SetLength(new.Arr,4);
 		i:=1;
+		// Memperbarui data peminjaman buku apabila buku tersedia
 		while (i < TBuku.Row) and (not found) do
 		begin
 			if TBuku.Arr[i][_idBuku] = ID_dipinjam then
@@ -74,6 +83,7 @@ begin
 					found:=true;
 				end else
 				begin
+					// Apabila buku tidak tersedia
 					writeln('Buku ', TBuku.Arr[i][_judulBuku], ' sedang habis!');
 					writeln('Coba lain kali.');
 					found:=true;
@@ -97,9 +107,12 @@ var
 	idx: integer;
 
 begin 
+	// CLearScreen
 	Clrscr;
+	// Input username
 	write('Masukkan username pengunjung: ');
 	readln(user);
+	// Output dalam format Tanggal | ID | Judul
 	writeln('Riwayat:');
 	// readCSV('file_history_peminjaman.csv', TPinjam);
 	//Lowercase(TPinjam.Arr[i][_user]);
