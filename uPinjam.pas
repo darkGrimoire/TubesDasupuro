@@ -4,7 +4,7 @@ interface
 uses pandas,crt;
 
 procedure pinjam_buku(username: string; TBuku: TCSVArr; var TPinjam: TCSVArr);
-procedure riwayat(TPinjam: TCSVArr);
+procedure riwayat(TBuku, TPinjam: TCSVArr);
 
 implementation
 procedure pinjam_buku(username: string; TBuku: TCSVArr; var TPinjam: TCSVArr);
@@ -64,11 +64,13 @@ begin
 	// TDestroy(TPinjam);
 end;
 
-procedure riwayat(TPinjam: TCSVArr);
+procedure riwayat(TBuku, TPinjam: TCSVArr);
 
 var
 	i: integer;
 	user: string;
+	idx: integer;
+
 begin 
 	Clrscr;
 	write('Masukkan username pengunjung: ');
@@ -81,6 +83,7 @@ begin
 	begin
 		if user=TPinjam.Arr[i][_user] then
 		begin
+			// idx:=searchCellContain(TBuku,_idBuku,);
 			write(TPinjam.Arr[i][_tanggalPinjam]); write(' | ');
 			write(TPinjam.Arr[i][_idPinjam]); write(' | ');
 			write(TPinjam.Arr[i][_judulBuku]); writeln('');

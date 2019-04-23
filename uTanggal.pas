@@ -1,15 +1,25 @@
-Program test;
+unit uTanggal;
 
-uses pandas;
+interface
 type 
 	TTanggal = record
 								D: integer;
 								M: integer;
 								Y: integer;
 							end;
-var
-	T1,T2: TTanggal;
-	i:integer;
+
+//cari tahu apa T1<T2
+function isTelat(T1, T2: TTanggal) : boolean;
+//ngubah string tanggal jadi integer
+function nilai(date: char): integer;
+function readTanggal(aText: string): TTanggal;
+function isTahunKabisat(Y: integer): integer;
+function maxH(M,Y: integer): integer;
+function isValidTanggal(Tanggal: TTanggal): boolean;
+function selisihTanggal(T1,T2: TTanggal): integer;
+function tambahTanggal(T1: TTanggal; Hari: integer): TTanggal;
+
+implementation
 
 function isTelat(T1, T2: TTanggal) : boolean;
 { true jika telat }
@@ -119,11 +129,3 @@ begin
 end;
 tambahTanggal:=T2;
 end;
-
-begin
-readln(T1.D,T1.M,T1.Y,i);
-writeln(isValidTanggal(T1));
-T2:=tambahTanggal(T1,i);
-writeln(T2.D,' ',T2.M,' ',T2.Y);
-writeln(selisihTanggal(T1,T2));
-end.

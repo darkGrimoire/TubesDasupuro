@@ -74,7 +74,7 @@ while true do
       4 : lihatLaporHilang(THilang, TBuku);
       5 : tambahBuku(TBuku);
       6 : tambahJumlahBuku(TBuku);
-      7 : riwayat(TPinjam);
+      7 : riwayat(TBuku,TPinjam);
       8 : Statistik(TUser,TBuku);
       9 : cariAnggota(TUser);
       0 : begin
