@@ -3,8 +3,11 @@ unit uHilang;
 interface
 uses pandas, crt;
 
+{ Modul Utama }
+//Modul melihat isi dari Laporan Hilang
 procedure lihatLaporHilang(THilang, TBuku: TCSVArr);
 (*Procedure ini digunakan untuk melihat laporan buku yang hilang. Perintah ini hanya bisa dilakukan oleh admin*)
+
 procedure laporHilang(var THilang: TCSVArr);
 (*Procedure ini digunakan oleh pengunjung untuk melaporkan buku yang hilang.
 * Untuk membuat laporan buku yang hilang, dibutuhkan masukan berupa ID Buku, judul buku,
