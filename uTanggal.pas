@@ -12,11 +12,17 @@ type
 function isTelat(T1, T2: TTanggal) : boolean;
 //ngubah string tanggal jadi integer
 function nilai(date: char): integer;
+//ubah string jadi bentuk tanggal (record)
 function readTanggal(aText: string): TTanggal;
+//cek tahun kabisat dan outputnya 
 function isTahunKabisat(Y: integer): integer;
+//nentuin max Hari dalam bulan dan tahun tersebut
 function maxH(M,Y: integer): integer;
+//nentuin bentukan tanggal valid
 function isValidTanggal(Tanggal: TTanggal): boolean;
+//nentuin selisih tanggal T2-T1
 function selisihTanggal(T1,T2: TTanggal): integer;
+//nambahin T1 dengan jumlah Hari yg diminta
 function tambahTanggal(T1: TTanggal; Hari: integer): TTanggal;
 
 implementation
@@ -129,3 +135,5 @@ begin
 end;
 tambahTanggal:=T2;
 end;
+
+end.

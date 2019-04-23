@@ -1,6 +1,5 @@
 Program test;
 
-uses pandas;
 type 
 	TTanggal = record
 								D: integer;
